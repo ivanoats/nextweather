@@ -1,14 +1,13 @@
 const got = require('got');
 
-export default (req, res) => {
-  const station = req.queryStringParameters.station || 'KSEA'
-  res.statusCode = 200
+export default async (req, res) => {
+  const station = req.query.station || 'KSEA'
    try {
     // @ts-ignore
     const observations = await got(`https://api.weather.gov/stations/${station}/observations`)
     res.json({
       statusCode: 200,
-      body: observations.body
+      body: JSON.parse(observations.body)
     })
   
   } catch (error) {
