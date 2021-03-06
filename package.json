@@ -9,7 +9,7 @@
     "postbuild": "next-on-netlify"
   },
   "dependencies": {
-    "cypress": "^6.2.1",
+    "cypress": "^6.4.0",
     "got": "^11.8.1",
     "next": "10.0.4",
     "next-on-netlify": "^2.7.0",
