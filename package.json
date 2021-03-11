@@ -9,6 +9,7 @@
     "postbuild": "next-on-netlify"
   },
   "dependencies": {
+    "csv-parse": "^4.15.3",
     "cypress": "^6.6.0",
     "got": "^11.8.2",
     "next": "10.0.8",

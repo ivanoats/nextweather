@@ -1,4 +1,5 @@
 const got = require('got');
+const parse = require('csv-parse/lib/sync');
 
 export default async (req, res) => {
   const station = req.query.station || 'WPOW1'
@@ -17,10 +18,14 @@ export default async (req, res) => {
         eventtime: "latest"
       }
     })
+    const records = parse(body, {
+      columns: true
+    })
+    console.log(records)
 
     res.json({
       statusCode: 200,
-      body: `"${body}"`
+      body: records[0]
     })
   
   } catch (error) {
