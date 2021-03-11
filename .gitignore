@@ -39,3 +39,6 @@ yarn-error.log*
 /404.html
 # Local Netlify folder
 .netlify
+
+# Editors
+.vscode/settings.json
