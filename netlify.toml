@@ -1,7 +1,6 @@
 [build]
   command   = "npm run build"
   functions = "pages/api"
-  publish   = "out"
 
 [dev]
   functions = "pages/api"
