@@ -1,6 +1,6 @@
 import got from 'got';
 import parse from 'csv-parse/lib/sync';
-import { metersPerSecondToMph} from '../util/convert';
+import { metersPerSecondToMph} from '../../util/convert';
 /**
  * @param {{ query: { station: string; }; }} req
  * @param {{ json: (arg0: { statusCode: number; body: any; }) => void; }} res
