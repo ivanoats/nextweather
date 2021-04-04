@@ -1,7 +1,11 @@
-const got = require('got');
-const parse = require('csv-parse/lib/sync');
+import got from 'got';
+import parse from 'csv-parse/lib/sync';
 
-export default async (req, res) => {
+/**
+ * @param {{ query: { station: string; }; }} req
+ * @param {{ json: (arg0: { statusCode: number; body: any; }) => void; }} res
+ */
+export async function handler(req, res) {
   const station = req.query.station || 'WPOW1'
    try {
     // @ts-ignore
