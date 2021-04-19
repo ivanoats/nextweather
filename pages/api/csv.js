@@ -8,7 +8,6 @@ import { metersPerSecondToMph} from './convert';
 export default async function handler(req, res) {
   const station = req.query.station || 'WPOW1'
    try {
-    // @ts-ignore
     const {body} = await got(`https://sdf.ndbc.noaa.gov/sos/server.php`,{
       searchParams: {
         request: "GetObservation",
@@ -25,7 +24,6 @@ export default async function handler(req, res) {
     const records = parse(body, {
       columns: true
     })
-    console.log(records)
 
     const weatherData = records[0]
 
@@ -38,7 +36,7 @@ export default async function handler(req, res) {
 
     res.json({
       statusCode: 200,
-      body: weatherConditions
+      body: {weatherConditions: weatherConditions}
     })
   
   } catch (error) {
