@@ -1,4 +1,4 @@
-import got from 'got';
+import axios from 'axios';
 import parse from 'csv-parse/lib/sync';
 import { metersPerSecondToMph} from './convert';
 /**
@@ -8,8 +8,8 @@ import { metersPerSecondToMph} from './convert';
 export default async function handler(req, res) {
   const station = req.query.station || 'WPOW1'
    try {
-    const {body} = await got(`https://sdf.ndbc.noaa.gov/sos/server.php`,{
-      searchParams: {
+    const {data} = await axios.get(`https://sdf.ndbc.noaa.gov/sos/server.php`,{
+      params: {
         request: "GetObservation",
         service: "SOS",
         version: "1.0.0",
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         eventtime: "latest"
       }
     })
-    const records = parse(body, {
+    const records = parse(data, {
       columns: true
     })
 
