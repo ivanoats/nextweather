@@ -1,6 +1,9 @@
 import axios from 'axios';
 import parse from 'csv-parse/lib/sync';
-import { metersPerSecondToMph} from './convert';
+import metersPerSecondToMph from '../../util/convert';
+import leadingZero from '../../util/leading-zero';
+import NWSDateToJSDate from '../../util/nws-date-to-js-date';
+
 /**
  * @param {{ query: { station: string; tideStation: string }; }} req
  * @oaran res
@@ -73,6 +76,47 @@ export default async function handler(req, res) {
     errors.push(error)
   }
 
+  try {
+    // get next tide level
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const tomorrowDay = tomorrow.getDate()
+    const tomorrowMonth = tomorrow.getMonth() + 1
+    const formattedTomorrowMonth = leadingZero(tomorrowMonth)
+    const formattedTomorrowDay = leadingZero(tomorrowDay)
+
+    const year = today.getFullYear()
+    const day = today.getDate()
+    const formattedDay = leadingZero(day)
+
+    const month = today.getMonth() + 1
+    const formattedMonth = leadingZero(month)
+    const beginDate = `${year}${formattedMonth}${formattedDay}`
+    const endDate = `${year}${formattedTomorrowMonth}${formattedTomorrowDay}`
+
+    const predictionsUri = `https://tidesandcurrents.noaa.gov/api/datagetter?product=predictions&application=westpointwinddotcom&begin_date=${beginDate}&end_date=${endDate}&datum=MLLW&station=${tideStationId}&time_zone=lst_ldt&units=english&interval=hilo&format=json`
+
+    const predictionsJSON = await axios.get(predictionsUri)
+    const predictions = predictionsJSON.data.predictions
+    const nextTide = `${NWSDateToJSDate(predictions[0].t)} ${
+      predictions[0].v
+    } ft ${predictions[0].type}`
+    let nextTideAfter
+    if (predictions.length > 1) {
+      nextTideAfter = `${NWSDateToJSDate(predictions[1].t)} ${
+        predictions[1].v
+      } ft ${predictions[1].type}`
+    } else {
+      nextTideAfter = 'Unavailable'
+    }
+    observations.nextTide = nextTide
+    observations.nextTideAfter = nextTideAfter
+
+  } catch (error) {
+    errors.push(error)
+  }
+
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -82,6 +126,6 @@ export default async function handler(req, res) {
     res.status(200).json(observations)
   } else {
     console.log(errors)
-    res.status(500).json(errors)
+    res.status(500).json({errors: errors.toString()})
   }
 }
