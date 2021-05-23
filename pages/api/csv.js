@@ -11,6 +11,7 @@ import NWSDateToJSDate from '../../util/nws-date-to-js-date';
 export default async function handler(req, res) {
   let errors = []
   let observations = {}
+  let rawWindData, rawTempData
 
   const weatherStation = req.query.station || 'WPOW1'
   const uri = 'https://sdf.ndbc.noaa.gov/sos/server.php'
@@ -32,7 +33,12 @@ export default async function handler(req, res) {
         eventtime: "latest"
       }
     })
-    const records = parse(data, {
+    rawWindData = data
+  } catch (error) {
+    errors.push(error)
+  }
+  try {
+    const records = parse(rawWindData, {
       columns: true
     })
     const weatherData = records[0]
@@ -58,7 +64,12 @@ export default async function handler(req, res) {
         eventtime: 'latest'
       }
     })
-    const tempData = parse(tempResults.data, {
+    rawTempData = tempResults
+  } catch (error) {
+    errors.push(error)
+  }
+  try {
+    const tempData = parse(rawTempData.data, {
       columns: true
     })[0]
     observations.airTemp = parseInt(tempData['air_temperature (C)'])
