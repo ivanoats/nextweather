@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-export default async (req, res) => {
+const observations = async (req, res) => {
   const station = req.query.station || 'KSEA'
    try {
-    const observations = await axios.get(`https://api.weather.gov/stations/${station}/observations`)
+    const obs = await axios.get(`https://api.weather.gov/stations/${station}/observations`)
     res.json({
       statusCode: 200,
-      body: JSON.parse(observations.data)
+      body: JSON.parse(obs.data)
     })
   
   } catch (error) {
@@ -16,3 +16,4 @@ export default async (req, res) => {
     })
   } 
 }
+export default observations
