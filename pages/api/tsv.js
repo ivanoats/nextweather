@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default async (req, res) => {
+const obs =  async (req, res) => {
   const station = req.query.station || 'WPOW1'
    try {
     // @ts-ignore
@@ -18,3 +18,5 @@ export default async (req, res) => {
     })
   } 
 }
+
+export default obs
