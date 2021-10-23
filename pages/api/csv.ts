@@ -6,21 +6,21 @@ import NWSDateToJSDate from '../../util/nws-date-to-js-date';
 
 /**
  * @param {{ query: { station: string; tideStation: string }; }} req
- * @oaran res
+ * @param res
  */
-export default async function handler(req, res) {
+export default async function handler(req: { query: { station: string; tideStation: string; }; }, res: { setHeader: (arg0: string, arg1: string) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { errors?: string; }): void; new(): any; }; }; }) {
   let errors = []
   let observations = {}
-  let rawWindData, rawTempData
+  let rawWindData: Buffer | any, rawTempData
 
   const weatherStation = req.query.station || 'WPOW1'
   const uri = 'https://sdf.ndbc.noaa.gov/sos/server.php'
 
-  const tideStationId= req.query.tideStation || '9447130'
+  const tideStationId = req.query.tideStation || '9447130'
   const tideUri = `https://tidesandcurrents.noaa.gov/api/datagetter?station=${tideStationId}&product=water_level&datum=mllw&time_zone=lst_ldt&units=english&format=json&date=latest&application=westpointwinddotcom`
 
   try {
-    const {data} = await axios.get(uri, {
+    const { data } = await axios.get(uri, {
       params: {
         request: "GetObservation",
         service: "SOS",
@@ -110,14 +110,12 @@ export default async function handler(req, res) {
 
     const predictionsJSON = await axios.get(predictionsUri)
     const predictions = predictionsJSON.data.predictions
-    const nextTide = `${NWSDateToJSDate(predictions[0].t)} ${
-      predictions[0].v
-    } ft ${predictions[0].type}`
+    const nextTide = `${NWSDateToJSDate(predictions[0].t)} ${predictions[0].v
+      } ft ${predictions[0].type}`
     let nextTideAfter
     if (predictions.length > 1) {
-      nextTideAfter = `${NWSDateToJSDate(predictions[1].t)} ${
-        predictions[1].v
-      } ft ${predictions[1].type}`
+      nextTideAfter = `${NWSDateToJSDate(predictions[1].t)} ${predictions[1].v
+        } ft ${predictions[1].type}`
     } else {
       nextTideAfter = 'Unavailable'
     }
@@ -137,6 +135,6 @@ export default async function handler(req, res) {
     res.status(200).json(observations)
   } else {
     console.log(errors)
-    res.status(500).json({errors: errors.toString()})
+    res.status(500).json({ errors: errors.toString() })
   }
 }
