@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import parse from 'csv-parse/lib/sync';
 
 import metersPerSecondToMph from '../../util/convert';
@@ -25,18 +25,9 @@ export default async function handler(
       tideStation: string;
     };
   },
-  res: {
-    setHeader: (arg0: string, arg1: string) => void;
-    status: (arg0: number) => {
-      (): any; new(): any;
-      json: {
-        (arg0: { errors?: string; }): void;
-        new(): any;
-      };
-    };
-  }
+  res: any
 ) {
-  let errors = []
+  let errors: Error[] = []
   let observations =
   {
     stationId: '',
@@ -73,7 +64,7 @@ export default async function handler(
     })
     console.log(data)
     rawWindData = data
-  } catch (error) {
+  } catch (error: any) {
     errors.push(error)
   }
   try {
@@ -87,7 +78,7 @@ export default async function handler(
     observations.windDirection = parseInt(weatherData['wind_from_direction (degree)'])
     observations.windGust = metersPerSecondToMph(parseInt(weatherData['wind_speed_of_gust (m/s)']))
 
-  } catch (error) {
+  } catch (error: any) {
     errors.push(error)
   }
   try {
@@ -104,7 +95,7 @@ export default async function handler(
       }
     })
     rawTempData = data
-  } catch (error) {
+  } catch (error: any) {
     errors.push(error)
   }
   try {
@@ -112,17 +103,17 @@ export default async function handler(
       columns: true
     })[0]
     observations.airTemp = parseInt(tempData['air_temperature (C)'])
-  } catch (error) {
+  } catch (error: any) {
     errors.push(error)
   }
 
   try {
     // get current tide level
-    const tideResults = await axios.get<object>(tideUri)
+    const tideResults = await axios.get<any>(tideUri)
     const tide = tideResults.data
     const currentTide = tide.data[tide.data.length - 1]
     observations.currentTide = currentTide.v
-  } catch (error) {
+  } catch (error: any) {
     errors.push(error)
   }
 
@@ -147,7 +138,7 @@ export default async function handler(
 
     const predictionsUri = `https://tidesandcurrents.noaa.gov/api/datagetter?product=predictions&application=westpointwinddotcom&begin_date=${beginDate}&end_date=${endDate}&datum=MLLW&station=${tideStationId}&time_zone=lst_ldt&units=english&interval=hilo&format=json`
 
-    const predictionsJSON = await axios.get<string>(predictionsUri)
+    const predictionsJSON = await axios.get<any>(predictionsUri)
     const predictions = predictionsJSON.data.predictions
     const nextTide = `${NWSDateToJSDate(predictions[0].t)} ${predictions[0].v
       } ft ${predictions[0].type}`
@@ -161,7 +152,7 @@ export default async function handler(
     observations.nextTide = nextTide
     observations.nextTideAfter = nextTideAfter
 
-  } catch (error) {
+  } catch (error: any) {
     errors.push(error)
   }
 
@@ -174,6 +165,6 @@ export default async function handler(
     res.status(200).json(observations)
   } else {
     console.log(errors)
-    res.status(500).json({ errors: errors.toString() })
+    res.status(500).json({ errors })
   }
 }
