@@ -1,8 +1,22 @@
-import axios from 'axios';
+import axios, { Axios, AxiosResponse } from 'axios';
 import parse from 'csv-parse/lib/sync';
 import metersPerSecondToMph from '../../util/convert';
 import leadingZero from '../../util/leading-zero';
 import NWSDateToJSDate from '../../util/nws-date-to-js-date';
+
+// interface WeatherDataRow {
+//   station_id: string,
+//   sensor_id: string,
+//   "latitude (degree)": string,
+//   "longitude (degree)": string,
+//   date_time: string,
+//   "depth (m)": string,
+//   "wind_from_direction (degree)": string,
+//   "wind_speed (m/s)": string,
+//   "wind_speed_of_gust (m/s)": string,
+//   "upward_air_velocity (m/s)": string
+// }
+
 
 /**
  * @param {{ query: { station: string; tideStation: string }; }} req
@@ -10,8 +24,17 @@ import NWSDateToJSDate from '../../util/nws-date-to-js-date';
  */
 export default async function handler(req: { query: { station: string; tideStation: string; }; }, res: { setHeader: (arg0: string, arg1: string) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { errors?: string; }): void; new(): any; }; }; }) {
   let errors = []
-  let observations = {}
-  let rawWindData: Buffer | any, rawTempData
+  let observations = {
+    stationId: '',
+    windSpeed: 0,
+    windDirection: 9,
+    windGust: 0,
+    airTemp: 0,
+    currentTide: 0,
+    nextTide: '',
+    nextTideAfter: ''
+  }
+  let rawWindData, rawTempData
 
   const weatherStation = req.query.station || 'WPOW1'
   const uri = 'https://sdf.ndbc.noaa.gov/sos/server.php'
@@ -33,12 +56,14 @@ export default async function handler(req: { query: { station: string; tideStati
         eventtime: "latest"
       }
     })
+    console.log(data)
     rawWindData = data
   } catch (error) {
     errors.push(error)
   }
+  console.log(typeof rawWindData)
   try {
-    const records = parse(rawWindData, {
+    const records = parse(rawWindData as string, {
       columns: true
     })
     const weatherData = records[0]
@@ -69,7 +94,7 @@ export default async function handler(req: { query: { station: string; tideStati
     errors.push(error)
   }
   try {
-    const tempData = parse(rawTempData.data, {
+    const tempData = parse(rawTempData.data as string, {
       columns: true
     })[0]
     observations.airTemp = parseInt(tempData['air_temperature (C)'])
@@ -80,7 +105,7 @@ export default async function handler(req: { query: { station: string; tideStati
   try {
     // get current tide level
     const tideResults = await axios.get(tideUri)
-    const tide = tideResults.data
+    const tide = tideResults.data as AxiosResponse
     const currentTide = tide.data[tide.data.length - 1]
     observations.currentTide = currentTide.v
   } catch (error) {
