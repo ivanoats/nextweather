@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const obs =  async (req, res) => {
-  const station = req.query.station || 'WPOW1'
    try {
     // @ts-ignore
     const observations = await axios.get(`https://www.ndbc.noaa.gov/data/hourly2/hour_00.txt`)

@@ -68,10 +68,11 @@ export default async function handler(
     errors.push(error)
   }
   try {
-    const records = parse(rawWindData, {
+    const records: Array<object> = parse(rawWindData, {
       columns: true
     })
-    const weatherData = records[0]
+    const weatherData: object = records[0]
+    console.log(weatherData)
 
     observations.stationId = weatherData.station_id
     observations.windSpeed = metersPerSecondToMph(parseInt(weatherData['wind_speed (m/s)']))
