@@ -68,10 +68,10 @@ export default async function handler(
     errors.push(error)
   }
   try {
-    const records: Array<object> = parse(rawWindData, {
+    const records: Array<any> = parse(rawWindData, {
       columns: true
     })
-    const weatherData: object = records[0]
+    const weatherData: any = records[0]
     console.log(weatherData)
 
     observations.stationId = weatherData.station_id
