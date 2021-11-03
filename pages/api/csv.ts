@@ -27,7 +27,7 @@ export default async function handler(
   },
   res: any
 ) {
-  let errors: Error[] = []
+  let errors = []
   let observations =
   {
     stationId: '',
@@ -64,14 +64,14 @@ export default async function handler(
     })
     console.log(data)
     rawWindData = data
-  } catch (error: any) {
+  } catch (error) {
     errors.push(error)
   }
   try {
-    const records: Array<any> = parse(rawWindData, {
+    const records: Array<WeatherDataRow> = parse(rawWindData, {
       columns: true
     })
-    const weatherData: any = records[0]
+    const weatherData = records[0]
     console.log(weatherData)
 
     observations.stationId = weatherData.station_id
@@ -96,7 +96,7 @@ export default async function handler(
       }
     })
     rawTempData = data
-  } catch (error: any) {
+  } catch (error) {
     errors.push(error)
   }
   try {
@@ -104,7 +104,7 @@ export default async function handler(
       columns: true
     })[0]
     observations.airTemp = parseInt(tempData['air_temperature (C)'])
-  } catch (error: any) {
+  } catch (error) {
     errors.push(error)
   }
 
