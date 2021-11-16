@@ -30,24 +30,22 @@ interface WeatherDataRow {
  }
 
 interface Tide {
-  metadata: Metadata;
-  data: (DataEntity)[] //| null;
+  metadata: TideMetadata;
+  data: (TideDataEntity)[] //| null;
 }
-interface Metadata {
+interface TideMetadata {
   id: string;
   name: string;
   lat: string;
   lon: string;
 }
-interface DataEntity {
+interface TideDataEntity {
   t: string;
   v: string;
   s: string;
   f: string;
   q: string;
 }
-
-
  interface Predictions {
   predictions: (PredictionsEntity)[] //| null;
 }
