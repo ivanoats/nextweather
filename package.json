@@ -31,7 +31,7 @@
     "@storybook/addon-links": "^6.4.0",
     "@storybook/react": "^6.4.0",
     "@types/node": "^16.11.10",
-    "@types/react": "^17.0.36",
+    "@types/react": "^17.0.37",
     "babel-loader": "^8.2.3",
     "cz-conventional-changelog": "^3.0.1",
     "eslint": "^7.23.0",
