@@ -55,6 +55,10 @@ interface PredictionsEntity {
   type: string;
 }
 
+type WeatherAPIerror = {
+  errors: string[];
+}
+
 export default async function handler(
   req: 
   NextApiRequest,
@@ -64,7 +68,7 @@ export default async function handler(
   //     tideStation: string;
   //   };
   // },
-  res: NextApiResponse<Observations>
+  res: NextApiResponse<Observations|WeatherAPIerror>
 ) {
   let errors = []
   let observations: Observations = {};
