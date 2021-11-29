@@ -64,7 +64,7 @@ export default async function handler(
   //     tideStation: string;
   //   };
   // },
-  res: NextApiResponse
+  res: NextApiResponse<Observations>
 ) {
   let errors = []
   let observations: Observations = {};

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "importHelpers": true,
     "removeComments": true,
     "target": "es5",
