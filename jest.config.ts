@@ -33,6 +33,7 @@ const customJestConfig: Config.InitialOptions = {
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   moduleDirectories: ['node_modules', 'src'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'cjs'],
   modulePaths: ['<rootDir>'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
@@ -40,6 +41,7 @@ const customJestConfig: Config.InitialOptions = {
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '\\.(scss|sass|css)$': 'identity-obj-proxy',
   },
+  verbose: true,
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

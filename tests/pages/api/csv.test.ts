@@ -1,5 +1,5 @@
 import { createMocks } from 'node-mocks-http';
-import handler from '../../../src/pages/api/csv';
+import handler from 'src/pages/api/csv';
 
 describe('/api/csv', () => {
   test('returns Observations object', async () => {
