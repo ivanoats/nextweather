@@ -1,5 +1,6 @@
 import type { Config } from '@jest/types';
 import nextJest from 'next/jest';
+import { jest } from '@jest/globals';
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
@@ -14,17 +15,20 @@ const customJestConfig: Config.InitialOptions = {
     '!**/node_modules/**',
   ],
   coveragePathIgnorePatterns: ['/node_modules/'],
+  extensionsToTreatAsEsm: ['.ts'],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
   testMatch: ['tests/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
   roots: ['<rootDir>/src', '<rootDir>/tests'],
-  // preset: 'ts-jest',
+  preset: 'ts-jest',
   transform: {
-    // Use babel-jest to transpile tests with the next/babel preset
-    // https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object
     '^.+\\.(js|jsx|ts|tsx)$': [
-      'babel-jest',
+      'ts-jest',
       { presets: ['next/babel', '@babel/preset-typescript'] },
     ],
-    // '^.+\\.(js|jsx|ts|tsx)$': 'ts-jest',
   },
   transformIgnorePatterns: [
     '/node_modules/',
@@ -40,6 +44,7 @@ const customJestConfig: Config.InitialOptions = {
     // Handle module aliases (this will be automatically configured for you soon)
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '\\.(scss|sass|css)$': 'identity-obj-proxy',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   verbose: true,
 };
