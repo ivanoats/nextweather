@@ -14,7 +14,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@chakra-ui/react": "^1.7.2",
+    "@chakra-ui/react": "^1.7.3",
     "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.6.0",
     "axios": "^0.24.0",
@@ -46,7 +46,6 @@
     "eslint": "^7.23.0",
     "eslint-config-next": "^12.0.7",
     "eslint-config-prettier": "^8.3.0",
-    "husky": "^7.0.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.4.3",
     "node-mocks-http": "^1.11.0",
@@ -54,7 +53,7 @@
     "ts-jest": "^27.1.1",
     "ts-node": "^10.4.0",
     "typedjson": "^1.8.0",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.3"
   },
   "config": {
     "commitizen": {
