@@ -10,8 +10,7 @@
     "commit": "cz",
     "lint": "next lint",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "prepare": "husky install"
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.7.3",
