@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^1.7.3",
-    "@emotion/react": "^11.7.0",
+    "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "axios": "^0.24.0",
     "csv": "^6.0.4",
@@ -27,9 +27,9 @@
     "react-dom": "17.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/preset-env": "^7.16.4",
-    "@babel/preset-typescript": "^7.16.0",
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.5",
     "@storybook/addon-actions": "^6.4.9",
     "@storybook/addon-essentials": "^6.4.9",
     "@storybook/addon-links": "^6.4.9",
@@ -37,22 +37,22 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.3",
-    "@types/node": "^16.11.12",
+    "@types/node": "^16.11.13",
     "@types/react": "^17.0.37",
-    "babel-jest": "^27.4.2",
+    "babel-jest": "^27.4.5",
     "babel-loader": "^8.2.3",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.23.0",
     "eslint-config-next": "^12.0.7",
     "eslint-config-prettier": "^8.3.0",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^27.4.3",
+    "jest": "^27.4.5",
     "node-mocks-http": "^1.11.0",
     "prettier": "^2.5.1",
     "ts-jest": "^27.1.1",
     "ts-node": "^10.4.0",
     "typedjson": "^1.8.0",
-    "typescript": "^4.5.3"
+    "typescript": "^4.5.4"
   },
   "config": {
     "commitizen": {
