@@ -18,7 +18,7 @@
     "@emotion/styled": "^11.6.0",
     "axios": "^0.24.0",
     "csv": "^6.0.4",
-    "csv-parse": "^4.16.0",
+    "csv-parse": "^4.16.3",
     "cypress": "^9.2.0",
     "framer-motion": "^4.1.7",
     "next": "^12.0.7",
