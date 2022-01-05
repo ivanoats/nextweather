@@ -1,6 +1,5 @@
 import type { Config } from '@jest/types';
 import nextJest from 'next/jest';
-import { jest } from '@jest/globals';
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
@@ -45,6 +44,8 @@ const customJestConfig: Config.InitialOptions = {
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '\\.(scss|sass|css)$': 'identity-obj-proxy',
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^@/pages/(.*)$': '<rootDir>/pages/$1',
+    '^csv-parse/sync': '<rootDir>/node_modules/csv-parse/dist/cjs/sync.cjs',
   },
   verbose: true,
 };

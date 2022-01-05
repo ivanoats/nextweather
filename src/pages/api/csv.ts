@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import axios from 'axios';
 import { parse } from 'csv-parse/sync';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -56,7 +57,7 @@ interface PredictionsEntity {
 }
 
 type WeatherAPIerror = {
-  errors: string[];
+  errors: unknown[];
 };
 
 export default async function handler(
@@ -69,10 +70,12 @@ export default async function handler(
   // },
   res: NextApiResponse<Observations | WeatherAPIerror>
 ) {
+  // because pushing to an array is mutable
+  // eslint-disable prefer-const
   let errors = [];
   let observations: Observations = {};
-  let rawWindData: string = '';
-  let rawTempData: string = '';
+  let rawWindData = '';
+  let rawTempData = '';
 
   const weatherStation = req.query.station || 'WPOW1';
   const uri = 'https://sdf.ndbc.noaa.gov/sos/server.php';
@@ -115,7 +118,7 @@ export default async function handler(
     observations.windGust = metersPerSecondToMph(
       parseInt(weatherData['wind_speed_of_gust (m/s)'])
     );
-  } catch (error: any) {
+  } catch (error) {
     errors.push(error);
   }
   try {
@@ -150,7 +153,7 @@ export default async function handler(
     const tide = tideResults.data;
     const currentTide = tide.data[tide.data.length - 1];
     observations.currentTide = currentTide.v;
-  } catch (error: any) {
+  } catch (error) {
     errors.push(error);
   }
 
@@ -190,7 +193,7 @@ export default async function handler(
     }
     observations.nextTide = nextTide;
     observations.nextTideAfter = nextTideAfter;
-  } catch (error: any) {
+  } catch (error) {
     errors.push(error);
   }
 

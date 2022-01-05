@@ -1,22 +1,16 @@
-import { createMocks } from 'node-mocks-http';
-import handler from 'src/pages/api/csv';
+import endpoint from 'src/pages/api/csv';
+import { testApiHandler } from 'next-test-api-route-handler';
+const handler = endpoint;
 
 describe('/api/csv', () => {
-  test('returns Observations object', async () => {
-    const { req, res } = createMocks({
-      method: 'GET',
-      query: {
-        station: 'wpow1',
+  it('returns Observations object', async () => {
+    await testApiHandler({
+      handler,
+      test: async ({ fetch }) => {
+        const res = await fetch({ method: 'GET' });
+        console.log(res);
+        await expect(res.json()).resolves.toStrictEqual({ hello: 'world' });
       },
     });
-
-    await handler(req, res);
-
-    expect(res._getStatusCode()).toBe(200);
-    expect(JSON.parse(res._getData())).toEqual(
-      expect.objectContaining({
-        message: 'weather data JSON',
-      })
-    );
   });
 });
