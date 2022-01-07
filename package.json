@@ -20,7 +20,7 @@
     "csv": "^6.0.5",
     "csv-parse": "^5.0.4",
     "cypress": "^9.2.0",
-    "framer-motion": "^5.5.5",
+    "framer-motion": "^5.5.6",
     "next": "^12.0.7",
     "next-cli": "^1.0.0",
     "react": "17.0.2",
