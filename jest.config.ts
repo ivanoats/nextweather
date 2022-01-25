@@ -14,7 +14,7 @@ const customJestConfig: Config.InitialOptions = {
     '!**/node_modules/**',
   ],
   coveragePathIgnorePatterns: ['/node_modules/'],
-  extensionsToTreatAsEsm: ['.ts'],
+  // extensionsToTreatAsEsm: ['.ts'],
   globals: {
     'ts-jest': {
       useESM: true,
