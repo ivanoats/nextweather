@@ -15,7 +15,7 @@
   "dependencies": {
     "@chakra-ui/react": "^1.8.4",
     "@emotion/react": "^11.7.1",
-    "@emotion/styled": "^11.6.0",
+    "@emotion/styled": "^11.8.1",
     "axios": "^0.26.0",
     "csv": "^6.0.5",
     "csv-parse": "^5.0.4",
