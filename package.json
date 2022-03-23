@@ -19,7 +19,7 @@
     "axios": "^0.26.0",
     "csv": "^6.0.5",
     "csv-parse": "^5.0.4",
-    "cypress": "^9.5.0",
+    "cypress": "^9.5.1",
     "framer-motion": "^6.2.8",
     "next": "^12.1.0",
     "next-cli": "^1.0.0",
