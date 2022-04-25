@@ -33,7 +33,7 @@ const customJestConfig: Config.InitialOptions = {
     '/node_modules/',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
-  testEnvironment: 'jsdom',
+  testEnvironment: 'node',
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   moduleDirectories: ['node_modules', 'src'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'cjs'],
