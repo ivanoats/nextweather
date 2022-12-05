@@ -7,7 +7,7 @@ import metersPerSecondToMph from '../../util/convert';
 import leadingZero from '../../util/leading-zero';
 import NWSDateToJSDate from '../../util/nws-date-to-js-date';
 
-interface WeatherDataRow {
+type WeatherDataRow = {
   station_id: string;
   sensor_id: string;
   'latitude (degree)': string;
@@ -30,27 +30,27 @@ type Observations = {
   nextTideAfter?: string;
 };
 
-interface Tide {
+type Tide = {
   metadata: TideMetadata;
   data: TideDataEntity[]; //| null;
 }
-interface TideMetadata {
+type TideMetadata = {
   id: string;
   name: string;
   lat: string;
   lon: string;
 }
-interface TideDataEntity {
+type TideDataEntity = {
   t: string;
   v: string;
   s: string;
   f: string;
   q: string;
 }
-interface Predictions {
+type Predictions = {
   predictions: PredictionsEntity[]; //| null;
 }
-interface PredictionsEntity {
+type PredictionsEntity = {
   t: string;
   v: string;
   type: string;
