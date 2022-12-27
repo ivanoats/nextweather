@@ -5,4 +5,8 @@
  **/
 module.exports = {
   poweredByHeader: false,
+  experimental: {
+    esmExternals: false,
+  }
+,
 };
