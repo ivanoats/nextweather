@@ -23,8 +23,8 @@
     "framer-motion": "^10.12.16",
     "next": "^13.4.4",
     "next-cli": "^1.0.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.22.1",
