@@ -21,7 +21,7 @@
     "csv-parse": "^5.4.0",
     "cypress": "^12.14.0",
     "framer-motion": "^10.12.16",
-    "next": "^13.4.4",
+    "next": "^14.2.15",
     "next-cli": "^1.0.0",
     "react": "18.3.0",
     "react-dom": "18.3.0"
