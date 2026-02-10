@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -55,135 +54,164 @@ type WeatherAPIerror = {
   errors: unknown[];
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  // {
-  //   query: {
-  //     station: string;
-  //     tideStation: string;
-  //   };
-  // },
-  res: NextApiResponse<Observations | WeatherAPIerror>
-) {
-  // because pushing to an array is mutable
-  // eslint-disable prefer-const
-  let errors = [];
-  let observations: Observations = {};
+const parseValue = (val: string): number | null => {
+  return val === 'MM' ? null : Number.parseFloat(val);
+};
 
-  const weatherStation = req.query.station || 'WPOW1';
-  // NDBC switched from SOS protocol to direct text files
-  // See: https://www.ndbc.noaa.gov/data/realtime2/
-  const ndbcUri = `https://www.ndbc.noaa.gov/data/realtime2/${weatherStation}.txt`;
+const parseNdbcObservations = (
+  weatherStation: string,
+  rawWeatherData: string
+): Observations => {
+  const lines = rawWeatherData.split('\n');
+  const dataLines = lines.filter(line => line.trim() && !line.startsWith('#'));
 
-  const tideStationId = req.query.tideStation || '9447130';
-  const tideUri = `https://tidesandcurrents.noaa.gov/api/datagetter?station=${tideStationId}&product=water_level&datum=mllw&time_zone=lst_ldt&units=english&format=json&date=latest&application=westpointwinddotcom`;
-
-  try {
-    // Fetch weather data from NDBC realtime2 text files
-    const { data: rawWeatherData } = await axios.get<string>(ndbcUri);
-    
-    // Parse the space-delimited text file
-    // Skip header lines (start with #) and get the first data row (most recent)
-    const lines = rawWeatherData.split('\n');
-    const dataLines = lines.filter(line => line.trim() && !line.startsWith('#'));
-    
-    if (dataLines.length === 0) {
-      throw new Error('No data available from NDBC');
-    }
-    
-    // First data line is the most recent observation
-    const latestData = dataLines[0].trim().split(/\s+/);
-    
-    // Parse values (MM = missing data)
-    const parseValue = (val: string): number | null => {
-      return val === 'MM' ? null : Number.parseFloat(val);
-    };
-    
-    observations.stationId = String(weatherStation);
-    
-    const windSpeed = parseValue(latestData[NDBC_COLUMNS.WSPD]);
-    if (windSpeed !== null) {
-      observations.windSpeed = metersPerSecondToMph(windSpeed);
-    }
-    
-    const windDir = parseValue(latestData[NDBC_COLUMNS.WDIR]);
-    if (windDir !== null) {
-      observations.windDirection = windDir;
-    }
-    
-    const windGust = parseValue(latestData[NDBC_COLUMNS.GST]);
-    if (windGust !== null) {
-      observations.windGust = metersPerSecondToMph(windGust);
-    }
-    
-    const airTemp = parseValue(latestData[NDBC_COLUMNS.ATMP]);
-    if (airTemp !== null) {
-      observations.airTemp = airTemp;
-    }
-  } catch (error) {
-    errors.push(error);
+  if (dataLines.length === 0) {
+    throw new Error('No data available from NDBC');
   }
 
-  try {
-    // get current tide level
-    const tideResults = await axios.get<Tide>(tideUri);
-    const tide = tideResults.data;
-    if (tide.data && tide.data.length > 0) {
-      const currentTide = tide.data[tide.data.length - 1];
-      observations.currentTide = currentTide.v;
-    }
-  } catch (error) {
-    errors.push(error);
+  const latestData = dataLines[0].trim().split(/\s+/);
+  const observations: Observations = {
+    stationId: String(weatherStation),
+  };
+
+  const windSpeed = parseValue(latestData[NDBC_COLUMNS.WSPD]);
+  if (windSpeed !== null) {
+    observations.windSpeed = metersPerSecondToMph(windSpeed);
   }
 
-  try {
-    // get next tide level
-    const today = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowDay = tomorrow.getDate();
-    const tomorrowMonth = tomorrow.getMonth() + 1;
-    const formattedTomorrowMonth = leadingZero(tomorrowMonth);
-    const formattedTomorrowDay = leadingZero(tomorrowDay);
+  const windDir = parseValue(latestData[NDBC_COLUMNS.WDIR]);
+  if (windDir !== null) {
+    observations.windDirection = windDir;
+  }
 
-    const year = today.getFullYear();
-    const day = today.getDate();
-    const formattedDay = leadingZero(day);
+  const windGust = parseValue(latestData[NDBC_COLUMNS.GST]);
+  if (windGust !== null) {
+    observations.windGust = metersPerSecondToMph(windGust);
+  }
 
-    const month = today.getMonth() + 1;
-    const formattedMonth = leadingZero(month);
-    const beginDate = `${year}${formattedMonth}${formattedDay}`;
-    const endDate = `${year}${formattedTomorrowMonth}${formattedTomorrowDay}`;
+  const airTemp = parseValue(latestData[NDBC_COLUMNS.ATMP]);
+  if (airTemp !== null) {
+    observations.airTemp = airTemp;
+  }
 
-    const predictionsUri = `https://tidesandcurrents.noaa.gov/api/datagetter?product=predictions&application=westpointwinddotcom&begin_date=${beginDate}&end_date=${endDate}&datum=MLLW&station=${tideStationId}&time_zone=lst_ldt&units=english&interval=hilo&format=json`;
+  return observations;
+};
 
-    const predictionsJSON = await axios.get<Predictions>(predictionsUri);
-    const predictions = predictionsJSON.data.predictions;
-    if (predictions && predictions.length > 0) {
-      const nextTide = `${NWSDateToJSDate(predictions[0].t)} ${
-        predictions[0].v
-      } ft ${predictions[0].type}`;
-      let nextTideAfter;
-      if (predictions.length > 1) {
-        nextTideAfter = `${NWSDateToJSDate(predictions[1].t)} ${
+const getCurrentTide = async (tideUri: string): Promise<string | undefined> => {
+  const tideResults = await axios.get<Tide>(tideUri);
+  const tide = tideResults.data;
+
+  if (tide.data && tide.data.length > 0) {
+    const currentTide = tide.data[tide.data.length - 1];
+    return currentTide.v;
+  }
+
+  return undefined;
+};
+
+const getNextTides = async (
+  tideStationId: string
+): Promise<{ nextTide?: string; nextTideAfter?: string }> => {
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowDay = tomorrow.getDate();
+  const tomorrowMonth = tomorrow.getMonth() + 1;
+  const formattedTomorrowMonth = leadingZero(tomorrowMonth);
+  const formattedTomorrowDay = leadingZero(tomorrowDay);
+
+  const year = today.getFullYear();
+  const day = today.getDate();
+  const formattedDay = leadingZero(day);
+
+  const month = today.getMonth() + 1;
+  const formattedMonth = leadingZero(month);
+  const beginDate = `${year}${formattedMonth}${formattedDay}`;
+  const endDate = `${year}${formattedTomorrowMonth}${formattedTomorrowDay}`;
+
+  const predictionsUri = `https://tidesandcurrents.noaa.gov/api/datagetter?product=predictions&application=westpointwinddotcom&begin_date=${beginDate}&end_date=${endDate}&datum=MLLW&station=${tideStationId}&time_zone=lst_ldt&units=english&interval=hilo&format=json`;
+
+  const predictionsJSON = await axios.get<Predictions>(predictionsUri);
+  const predictions = predictionsJSON.data.predictions;
+
+  if (!predictions || predictions.length === 0) {
+    return {};
+  }
+
+  const nextTide = `${NWSDateToJSDate(predictions[0].t)} ${
+    predictions[0].v
+  } ft ${predictions[0].type}`;
+  const nextTideAfter =
+    predictions.length > 1
+      ? `${NWSDateToJSDate(predictions[1].t)} ${
           predictions[1].v
-        } ft ${predictions[1].type}`;
-      } else {
-        nextTideAfter = 'Unavailable';
-      }
-      observations.nextTide = nextTide;
-      observations.nextTideAfter = nextTideAfter;
-    }
-  } catch (error) {
-    errors.push(error);
-  }
+        } ft ${predictions[1].type}`
+      : 'Unavailable';
 
+  return { nextTide, nextTideAfter };
+};
+
+const fetchWeatherData = async (
+  weatherStation: string,
+  ndbcUri: string
+): Promise<Observations> => {
+  const { data: rawWeatherData } = await axios.get<string>(ndbcUri);
+  return parseNdbcObservations(weatherStation, rawWeatherData);
+};
+
+const setCorsHeaders = (res: NextApiResponse): void => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
   );
-  if (errors.length < 1) {
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Observations | WeatherAPIerror>
+) {
+  const weatherStation = String(req.query.station || 'WPOW1');
+  const tideStationId = String(req.query.tideStation || '9447130');
+
+  // NDBC switched from SOS protocol to direct text files
+  // See: https://www.ndbc.noaa.gov/data/realtime2/
+  const ndbcUri = `https://www.ndbc.noaa.gov/data/realtime2/${weatherStation}.txt`;
+  const tideUri = `https://tidesandcurrents.noaa.gov/api/datagetter?station=${tideStationId}&product=water_level&datum=mllw&time_zone=lst_ldt&units=english&format=json&date=latest&application=westpointwinddotcom`;
+
+  // Run all API calls in parallel and collect results/errors
+  const [weatherResult, currentTideResult, nextTidesResult] =
+    await Promise.allSettled([
+      fetchWeatherData(weatherStation, ndbcUri),
+      getCurrentTide(tideUri),
+      getNextTides(tideStationId),
+    ]);
+
+  const errors: unknown[] = [];
+  let observations: Observations = {};
+
+  if (weatherResult.status === 'fulfilled') {
+    observations = { ...observations, ...weatherResult.value };
+  } else {
+    errors.push(weatherResult.reason);
+  }
+
+  if (currentTideResult.status === 'fulfilled') {
+    observations.currentTide = currentTideResult.value;
+  } else {
+    errors.push(currentTideResult.reason);
+  }
+
+  if (nextTidesResult.status === 'fulfilled') {
+    observations.nextTide = nextTidesResult.value.nextTide;
+    observations.nextTideAfter = nextTidesResult.value.nextTideAfter;
+  } else {
+    errors.push(nextTidesResult.reason);
+  }
+
+  setCorsHeaders(res);
+
+  if (errors.length === 0) {
     res.status(200).json(observations);
   } else {
     console.log(errors);
