@@ -6,7 +6,7 @@ NextWeather is a specialized weather station data aggregator focused on wind and
 ## Core Architecture
 
 ### Data Sources & Integration Points
-- **NDBC (National Data Buoy Center)**: Wind data via SOS (Sensor Observation Service) protocol at `sdf.ndbc.noaa.gov/sos/server.php`
+- **NDBC (National Data Buoy Center)**: Wind and temperature data via realtime2 text files at `www.ndbc.noaa.gov/data/realtime2/{station}.txt` (space-delimited format with 45-day history)
 - **NOAA Tides & Currents API**: Current tide levels and predictions via `tidesandcurrents.noaa.gov/api/datagetter`
 - **National Weather Service**: Weather observations via `api.weather.gov/stations`
 
@@ -27,8 +27,8 @@ let observations: Observations = {};
 - **Next.js 15** with Pages Router (not App Router)
 - **React 19** with **Chakra UI v3** (uses `ChakraProvider` with `defaultSystem`)
 - **TypeScript + JavaScript**: Mixed usage, with `.ts` for new features, `.js` for legacy endpoints
-- **CSV Parsing**: Uses `csv-parse/sync` with custom type assertions for `unknown` data
-- **Testing**: Jest with `next-test-api-route-handler` for API endpoint testing
+- **NDBC Data Parsing**: Space-delimited text parsing for realtime2 format (MM = missing data)
+- **Testing**: Jest with `next-test-api-route-handler` (uses `pagesHandler` config) for API endpoint testing
 
 ## Development Workflows
 
@@ -70,8 +70,9 @@ res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content
 ```
 
 ## Testing Approach
-- API endpoints tested with `next-test-api-route-handler`
-- Expect specific response shape: `airTemp`, `windSpeed`, `windDirection`, `windGust`, `currentTide`, `nextTide`
+- API endpoints tested with `next-test-api-route-handler` using `pagesHandler` config
+- Core weather properties: `stationId`, `windSpeed`, `windDirection`, `windGust`, `airTemp`
+- Tide properties may be unavailable: `currentTide`, `nextTide`, `nextTideAfter`
 - Tests in `/tests/pages/api/` mirror the API structure
 
 ## Data Types
