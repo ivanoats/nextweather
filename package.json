@@ -21,36 +21,37 @@
     "csv-parse": "^6.1.0",
     "cypress": "^15.10.0",
     "framer-motion": "^12.34.0",
-    "next": "^15.5.10",
+    "next": "16.1.6",
     "next-cli": "^1.0.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.0",
     "@babel/preset-typescript": "^7.28.5",
-    "@storybook/addon-actions": "^8.6.15",
-    "@storybook/addon-essentials": "^8.6.15",
-    "@storybook/addon-links": "^8.6.15",
-    "@storybook/react": "^8.6.15",
-    "storybook": "^8.6.15",
+    "@storybook/addon-docs": "^10.2.8",
+    "@storybook/addon-links": "^10.2.8",
+    "@storybook/nextjs": "^10.2.8",
+    "@storybook/react": "^10.2.8",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.2.2",
-    "@types/react": "^19.2.13",
+    "@types/react": "19.2.13",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
-    "babel-jest": "^29.5.0",
-    "babel-loader": "^9.1.2",
+    "@typescript-eslint/parser": "^8.55.0",
+    "babel-jest": "^30.2.0",
+    "babel-loader": "^10.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.16.0",
-    "eslint-config-next": "^16.1.6",
+    "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.2.0",
     "next-test-api-route-handler": "^5.0.3",
     "prettier": "^3.8.1",
+    "storybook": "^10.2.8",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typedjson": "^1.8.0",
@@ -60,5 +61,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "overrides": {
+    "@types/react": "19.2.13"
   }
 }
