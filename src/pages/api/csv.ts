@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import metersPerSecondToMph from '../../util/convert';
+import metersPerSecondToMph, { celsiusToFahrenheit } from '../../util/convert';
 import leadingZero from '../../util/leading-zero';
 import NWSDateToJSDate from '../../util/nws-date-to-js-date';
 
@@ -91,7 +91,7 @@ const parseNdbcObservations = (
 
   const airTemp = parseValue(latestData[NDBC_COLUMNS.ATMP]);
   if (airTemp !== null) {
-    observations.airTemp = airTemp;
+    observations.airTemp = celsiusToFahrenheit(airTemp);
   }
 
   return observations;
