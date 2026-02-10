@@ -1,19 +1,22 @@
 import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import { Header } from './Header';
 
-export default {
+const meta: Meta<typeof Header> = {
   title: 'Example/Header',
   component: Header,
-} as ComponentMeta<typeof Header>;
-
-const Template: ComponentStory<typeof Header> = (args) => <Header {...args} />;
-
-export const LoggedIn = Template.bind({});
-LoggedIn.args = {
-  user: {},
 };
 
-export const LoggedOut = Template.bind({});
-LoggedOut.args = {};
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const LoggedIn: Story = {
+  args: {
+    user: {},
+  },
+};
+
+export const LoggedOut: Story = {
+  args: {},
+};

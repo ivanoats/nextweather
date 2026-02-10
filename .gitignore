@@ -40,3 +40,6 @@ yarn-error.log*
 .netlify
 
 buildlog.txt
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.github/instructions/snyk_rules.instructions.md
