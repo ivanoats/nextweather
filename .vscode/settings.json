@@ -2,5 +2,11 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "python.pythonPath": "/opt/homebrew/opt/python@3.9/bin/python3.9",
-  "snyk.advanced.autoSelectOrganization": true
+  "snyk.advanced.autoSelectOrganization": true,
+  "chat.tools.terminal.autoApprove": {
+    "/^npx @next/codemod@canary upgrade latest --yes$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
 }
