@@ -110,13 +110,13 @@ export default async function handler(
 
     observations.stationId = weatherData.station_id;
     observations.windSpeed = metersPerSecondToMph(
-      parseInt(weatherData['wind_speed (m/s)'])
+      Number.parseInt(weatherData['wind_speed (m/s)'])
     );
-    observations.windDirection = parseInt(
+    observations.windDirection = Number.parseInt(
       weatherData['wind_from_direction (degree)']
     );
     observations.windGust = metersPerSecondToMph(
-      parseInt(weatherData['wind_speed_of_gust (m/s)'])
+      Number.parseInt(weatherData['wind_speed_of_gust (m/s)'])
     );
   } catch (error) {
     errors.push(error);
@@ -141,8 +141,8 @@ export default async function handler(
   try {
     const tempData = parse(rawTempData, {
       columns: true,
-    })[0];
-    observations.airTemp = parseInt(tempData['air_temperature (C)']);
+    })[0] as Record<string, any>;
+    observations.airTemp = Number.parseInt(tempData['air_temperature (C)']);
   } catch (error) {
     errors.push(error);
   }
