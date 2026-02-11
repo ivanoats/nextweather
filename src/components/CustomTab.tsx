@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Box, Flex, Text, VStack, Input } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
@@ -19,12 +19,27 @@ export default function CustomTab({
   const [station, setStation] = useState(initialStation)
   const [tideStation, setTideStation] = useState(initialTideStation)
   const [saved, setSaved] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
 
   function handleApply() {
     if (!station.trim() || !tideStation.trim()) return
     onApply(station.trim(), tideStation.trim())
     setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    
+    // Clear any existing timeout before setting a new one
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    
+    timeoutRef.current = setTimeout(() => setSaved(false), 2000)
   }
 
   return (
