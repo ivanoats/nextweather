@@ -18,37 +18,37 @@ function renderTabBar(activeTab: TabId = 'forecast', onTabChange = jest.fn()) {
 }
 
 describe('TabBar', () => {
-  it('renders navigation with all three buttons', () => {
+  it('renders navigation with all three tabs', () => {
     renderTabBar()
 
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Forecast' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'About' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Custom' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Forecast' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'About' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Custom' })).toBeInTheDocument()
   })
 
-  it('marks the active navigation item with aria-current', () => {
+  it('marks the active tab with aria-selected', () => {
     renderTabBar('about')
 
-    expect(screen.getByRole('button', { name: 'About' })).toHaveAttribute('aria-current', 'page')
-    expect(screen.getByRole('button', { name: 'Forecast' })).not.toHaveAttribute('aria-current')
-    expect(screen.getByRole('button', { name: 'Custom' })).not.toHaveAttribute('aria-current')
+    expect(screen.getByRole('tab', { name: 'About' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Forecast' })).toHaveAttribute('aria-selected', 'false')
+    expect(screen.getByRole('tab', { name: 'Custom' })).toHaveAttribute('aria-selected', 'false')
   })
 
-  it('calls onTabChange when a navigation button is clicked', async () => {
+  it('calls onTabChange when a tab is clicked', async () => {
     const user = userEvent.setup()
     const { onTabChange } = renderTabBar('forecast')
 
-    await user.click(screen.getByRole('button', { name: 'About' }))
+    await user.click(screen.getByRole('tab', { name: 'About' }))
     expect(onTabChange).toHaveBeenCalledWith('about')
 
-    await user.click(screen.getByRole('button', { name: 'Custom' }))
+    await user.click(screen.getByRole('tab', { name: 'Custom' }))
     expect(onTabChange).toHaveBeenCalledWith('custom')
   })
 
-  it('defaults forecast as the active navigation item', () => {
+  it('defaults forecast as the active tab', () => {
     renderTabBar()
 
-    expect(screen.getByRole('button', { name: 'Forecast' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('tab', { name: 'Forecast' })).toHaveAttribute('aria-selected', 'true')
   })
 })

@@ -35,7 +35,7 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
       pb="env(safe-area-inset-bottom)"
       zIndex={10}
     >
-      <Flex justify="space-around" align="center" h="56px" maxW="480px" mx="auto">
+      <Flex role="tablist" justify="space-around" align="center" h="56px" maxW="480px" mx="auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id
           return (
@@ -49,7 +49,8 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
               h="100%"
               cursor="pointer"
               onClick={() => onTabChange(tab.id)}
-              aria-current={isActive ? 'page' : undefined}
+              role="tab"
+              aria-selected={isActive}
               aria-label={tab.label}
               _hover={{ bg: 'gray.50' }}
               transition="background 0.15s"
