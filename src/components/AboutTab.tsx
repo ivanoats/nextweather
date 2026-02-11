@@ -71,6 +71,8 @@ export default function AboutTab() {
               objectFit="cover"
               maxH="300px"
               w="100%"
+              loading="lazy"
+              decoding="async"
             />
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               Developed by{' '}
