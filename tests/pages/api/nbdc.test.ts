@@ -1,4 +1,4 @@
-import endpoint from 'src/pages/api/csv';
+import endpoint from 'src/pages/api/nbdc';
 import { testApiHandler } from 'next-test-api-route-handler';
 
 describe('/api/csv', () => {

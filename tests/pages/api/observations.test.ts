@@ -50,7 +50,7 @@ describe('/api/observations', () => {
     };
 
     mockedAxios.get.mockResolvedValueOnce({
-      data: JSON.stringify(mockObservationData),
+      data: mockObservationData,
     });
 
     await testApiHandler({
@@ -101,7 +101,7 @@ describe('/api/observations', () => {
     };
 
     mockedAxios.get.mockResolvedValueOnce({
-      data: JSON.stringify(mockObservationData),
+      data: mockObservationData,
     });
 
     await testApiHandler({
