@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
@@ -28,8 +28,7 @@
         "--runInBand"
       ],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "port": 9229
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "name": "Next.js: debug server-side",
@@ -39,7 +38,7 @@
     },
     {
       "name": "Next.js: debug client-side",
-      "type": "pwa-chrome",
+      "type": "chrome",
       "request": "launch",
       "url": "http://localhost:3000"
     },
@@ -48,7 +47,6 @@
       "type": "node-terminal",
       "request": "launch",
       "command": "npm run dev",
-      "console": "integratedTerminal",
       "serverReadyAction": {
         "pattern": "started server on .+, url: (https?://.+)",
         "uriFormat": "%s",

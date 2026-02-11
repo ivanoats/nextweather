@@ -1,4 +1,4 @@
-import endpoint from 'src/pages/api/csv';
+import endpoint from 'src/pages/api/nbdc';
 import { testApiHandler } from 'next-test-api-route-handler';
 
 describe('/api/csv', () => {
@@ -16,6 +16,7 @@ describe('/api/csv', () => {
         expect(body).toHaveProperty('airTemp');
         // Tide data may vary based on API availability
         expect(body).toHaveProperty('nextTide');
+        expect(body).toHaveProperty('nextTideAfter');
       },
     });
   });
