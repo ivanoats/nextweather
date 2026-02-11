@@ -27,7 +27,7 @@ function renderHome() {
 
 beforeEach(() => {
   jest.useFakeTimers()
-  global.fetch = jest.fn()
+  globalThis.fetch = jest.fn()
 })
 
 afterEach(() => {
@@ -37,7 +37,7 @@ afterEach(() => {
 
 describe('Tab navigation integration', () => {
   it('renders the tab bar with all three tabs', async () => {
-    ;(global.fetch as jest.Mock).mockReturnValue(new Promise(() => {}))
+    ;(globalThis.fetch as jest.Mock).mockReturnValue(new Promise(() => {}))
 
     renderHome()
 
@@ -47,7 +47,7 @@ describe('Tab navigation integration', () => {
   })
 
   it('shows the forecast tab by default', async () => {
-    ;(global.fetch as jest.Mock).mockReturnValue(new Promise(() => {}))
+    ;(globalThis.fetch as jest.Mock).mockReturnValue(new Promise(() => {}))
 
     renderHome()
 
@@ -58,7 +58,7 @@ describe('Tab navigation integration', () => {
   it('switches to the About tab when clicked', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+    ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockObservations,
     })
@@ -76,7 +76,7 @@ describe('Tab navigation integration', () => {
   it('switches to the Custom tab when clicked', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+    ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockObservations,
     })
@@ -95,7 +95,7 @@ describe('Tab navigation integration', () => {
   it('returns to forecast tab after navigating away', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+    ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockObservations,
     })
@@ -120,7 +120,7 @@ describe('Tab navigation integration', () => {
   it('applies custom station from Custom tab and returns to forecast', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
-    ;(global.fetch as jest.Mock)
+    ;(globalThis.fetch as jest.Mock)
       .mockResolvedValueOnce({
         ok: true,
         json: async () => mockObservations,
@@ -155,7 +155,7 @@ describe('Tab navigation integration', () => {
     })
 
     // Verify new fetch was made with custom station
-    const fetchCalls = (global.fetch as jest.Mock).mock.calls
+    const fetchCalls = (globalThis.fetch as jest.Mock).mock.calls
     const lastCall = fetchCalls[fetchCalls.length - 1][0]
     expect(lastCall).toContain('station=SISW1')
   })

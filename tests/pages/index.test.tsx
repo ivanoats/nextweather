@@ -27,7 +27,7 @@ function renderHome() {
 
 beforeEach(() => {
   jest.useFakeTimers()
-  global.fetch = jest.fn()
+  globalThis.fetch = jest.fn()
 })
 
 afterEach(() => {
@@ -38,7 +38,7 @@ afterEach(() => {
 describe('Home page', () => {
   it('shows a loading spinner before data arrives', () => {
     // fetch never resolves
-    ;(global.fetch as jest.Mock).mockReturnValue(new Promise(() => {}))
+    ;(globalThis.fetch as jest.Mock).mockReturnValue(new Promise(() => {}))
 
     renderHome()
 
@@ -46,7 +46,7 @@ describe('Home page', () => {
   })
 
   it('renders weather data after a successful fetch', async () => {
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+    ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockObservations,
     })
@@ -83,7 +83,7 @@ describe('Home page', () => {
   })
 
   it('shows an error state when fetch fails', async () => {
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+    ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
       status: 500,
     })
@@ -100,7 +100,7 @@ describe('Home page', () => {
   })
 
   it('shows an error state on network failure', async () => {
-    ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
+    ;(globalThis.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
 
     await act(async () => {
       renderHome()
@@ -116,7 +116,7 @@ describe('Home page', () => {
 
     const updatedObs = { ...mockObservations, windSpeed: 20.1 }
 
-    ;(global.fetch as jest.Mock)
+    ;(globalThis.fetch as jest.Mock)
       .mockResolvedValueOnce({ ok: true, json: async () => mockObservations })
       .mockResolvedValueOnce({ ok: true, json: async () => updatedObs })
 
@@ -134,13 +134,13 @@ describe('Home page', () => {
       expect(screen.getByText('20')).toBeInTheDocument()
     })
 
-    expect(global.fetch).toHaveBeenCalledTimes(2)
+    expect(globalThis.fetch).toHaveBeenCalledTimes(2)
   })
 
   it('displays dash placeholders when optional fields are missing', async () => {
     const partial = { stationId: 'WPOW1', windSpeed: 5.0 }
 
-    ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+    ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => partial,
     })

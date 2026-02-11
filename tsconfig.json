@@ -3,6 +3,7 @@
     "allowJs": true,
     "baseUrl": "./",
     "esModuleInterop": true,
+    "types": ["jest", "@testing-library/jest-dom"],
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "incremental": true,

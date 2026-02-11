@@ -31,7 +31,7 @@ const customJestConfig: Config.InitialOptions = {
   },
   transformIgnorePatterns: [
     '/node_modules/',
-    '^.+\\.module\\.(css|sass|scss)$',
+    String.raw`^.+\.module\.(css|sass|scss)$`,
   ],
   testEnvironment: 'node',
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
