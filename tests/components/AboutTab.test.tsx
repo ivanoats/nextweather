@@ -65,6 +65,7 @@ describe('AboutTab', () => {
     expect(link).toBeInTheDocument()
     expect(link).toHaveAttribute('href', 'https://ivanstorck.com')
     expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
   })
 
   it('renders link to GitHub issues', () => {
@@ -73,5 +74,6 @@ describe('AboutTab', () => {
     expect(link).toBeInTheDocument()
     expect(link).toHaveAttribute('href', 'https://github.com/ivanoats/nextweather/issues')
     expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
   })
 })
