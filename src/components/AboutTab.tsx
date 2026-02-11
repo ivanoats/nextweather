@@ -1,4 +1,4 @@
-import { Box, Text, VStack } from '@chakra-ui/react'
+import { Box, Image, Link, Text, VStack } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
 const MotionBox = motion.create(Box)
@@ -57,6 +57,42 @@ export default function AboutTab() {
           <Text fontSize="xs" color="gray.400" mt={3}>
             Use the Custom tab to monitor a different station.
           </Text>
+        </Box>
+
+        <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
+          <Text fontSize="md" fontWeight="700" color="gray.800" mb={2}>
+            About the Creator
+          </Text>
+          <VStack gap={3} align="stretch">
+            <Image
+              src="/ivan-on-oc.jpg"
+              alt="Ivan Storck paddling an outrigger canoe"
+              borderRadius="xl"
+              objectFit="cover"
+              maxH="300px"
+              w="100%"
+              loading="lazy"
+              decoding="async"
+            />
+            <Text fontSize="sm" color="gray.600" lineHeight="tall">
+              Developed by{' '}
+              <Link href="https://ivanstorck.com" target="_blank" rel="noopener noreferrer" color="blue.500">
+                Ivan Storck
+              </Link>
+              , a software engineer and avid paddler based in
+              Seattle. NextWeather was born out of a desire for a simple,
+              mobile-friendly way to check local conditions before heading out on
+              the water.
+            </Text>
+            <Text fontSize="sm" color="gray.600" lineHeight="tall">
+              If you have feedback or suggestions for improving the app, please
+              reach out on{' '}
+              <Link href="https://github.com/ivanoats/nextweather/issues" target="_blank" rel="noopener noreferrer" color="blue.500">
+                GitHub
+              </Link>
+              .
+            </Text>
+          </VStack>
         </Box>
       </VStack>
     </MotionBox>
