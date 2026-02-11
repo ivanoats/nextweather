@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import TabBar, { type TabId } from '../components/TabBar'
 import AboutTab from '../components/AboutTab'
 import CustomTab from '../components/CustomTab'
+import ForecastTab from '../components/ForecastTab'
 
 const MotionBox = motion.create(Box)
 const MotionFlex = motion.create(Flex)
@@ -358,6 +359,10 @@ export default function Home() {
           )}
 
           {activeTab === 'about' && <AboutTab />}
+
+          {activeTab === 'forecast' && (
+            <ForecastTab station={station} />
+          )}
 
           {activeTab === 'custom' && (
             <CustomTab

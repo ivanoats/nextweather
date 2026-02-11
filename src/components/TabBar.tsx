@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@chakra-ui/react'
 
-export type TabId = 'conditions' | 'about' | 'custom'
+export type TabId = 'conditions' | 'forecast' | 'about' | 'custom'
 
 interface TabItem {
   id: TabId
@@ -10,6 +10,7 @@ interface TabItem {
 
 const tabs: TabItem[] = [
   { id: 'conditions', label: 'Conditions', icon: '🌊' },
+  { id: 'forecast', label: 'Forecast', icon: '🌤️' },
   { id: 'about', label: 'About', icon: 'ℹ️' },
   { id: 'custom', label: 'Custom', icon: '⚙️' },
 ]

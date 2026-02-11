@@ -18,11 +18,12 @@ function renderTabBar(activeTab: TabId = 'conditions', onTabChange = jest.fn()) 
 }
 
 describe('TabBar', () => {
-  it('renders navigation with all three tabs', () => {
+  it('renders navigation with all four tabs', () => {
     renderTabBar()
 
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Conditions' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Forecast' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'About' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Custom' })).toBeInTheDocument()
   })

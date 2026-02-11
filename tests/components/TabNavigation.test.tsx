@@ -36,12 +36,13 @@ afterEach(() => {
 })
 
 describe('Tab navigation integration', () => {
-  it('renders the tab bar with all three tabs', async () => {
+  it('renders the tab bar with all four tabs', async () => {
     ;(globalThis.fetch as jest.Mock).mockReturnValue(new Promise(() => {}))
 
     renderHome()
 
     expect(screen.getByRole('tab', { name: 'Conditions' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Forecast' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'About' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Custom' })).toBeInTheDocument()
   })
