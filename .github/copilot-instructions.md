@@ -139,7 +139,7 @@ type Observations = {
   windSpeed?: number;     // Converted to MPH
   windDirection?: number; // Degrees
   windGust?: number;      // Converted to MPH  
-  airTemp?: number;       // Celsius
+  airTemp?: number;       // Converted to Fahrenheit
   currentTide?: string;   // Current level
   nextTide?: string;      // Next tide prediction
   nextTideAfter?: string; // Following tide prediction
