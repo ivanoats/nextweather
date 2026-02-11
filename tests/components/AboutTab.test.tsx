@@ -46,4 +46,34 @@ describe('AboutTab', () => {
       screen.getByText(/Use the Custom tab to monitor a different station/i),
     ).toBeInTheDocument()
   })
+
+  it('renders the "About the Creator" section heading', () => {
+    renderAboutTab()
+    expect(screen.getByText('About the Creator')).toBeInTheDocument()
+  })
+
+  it('renders the creator image with correct alt text', () => {
+    renderAboutTab()
+    const image = screen.getByAltText('Ivan Storck paddling an outrigger canoe')
+    expect(image).toBeInTheDocument()
+    expect(image).toHaveAttribute('src', '/ivan-on-oc.jpg')
+  })
+
+  it('renders link to creator website', () => {
+    renderAboutTab()
+    const link = screen.getByRole('link', { name: /Ivan Storck/i })
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', 'https://ivanstorck.com')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
+  it('renders link to GitHub issues', () => {
+    renderAboutTab()
+    const link = screen.getByRole('link', { name: /GitHub/i })
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', 'https://github.com/ivanoats/nextweather/issues')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
 })
