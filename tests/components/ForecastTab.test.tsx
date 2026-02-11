@@ -48,14 +48,14 @@ describe('ForecastTab', () => {
   })
 
   it('shows loading state initially', () => {
-    global.fetch = jest.fn(() => new Promise(() => {})) as jest.Mock
+    globalThis.fetch = jest.fn(() => new Promise(() => {})) as jest.Mock
     renderForecastTab()
 
     expect(screen.getByText('Fetching forecast…')).toBeInTheDocument()
   })
 
   it('displays forecast data after loading', async () => {
-    global.fetch = jest.fn(() =>
+    globalThis.fetch = jest.fn(() =>
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockFetchResponse),
@@ -71,7 +71,7 @@ describe('ForecastTab', () => {
   })
 
   it('shows error state on fetch failure', async () => {
-    global.fetch = jest.fn(() =>
+    globalThis.fetch = jest.fn(() =>
       Promise.resolve({
         ok: false,
         status: 500,
@@ -85,7 +85,7 @@ describe('ForecastTab', () => {
   })
 
   it('renders the title and description', async () => {
-    global.fetch = jest.fn(() =>
+    globalThis.fetch = jest.fn(() =>
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockFetchResponse),
