@@ -1,4 +1,4 @@
-import { Box, Image, Text, VStack } from '@chakra-ui/react'
+import { Box, Image, Link, Text, VStack } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
 const MotionBox = motion.create(Box)
@@ -76,7 +76,10 @@ export default function AboutTab() {
             />
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               Developed by{' '}
-                <a href="https://ivanstorck.com" target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>Ivan Storck</a>, a software engineer and avid paddler based in
+              <Link href="https://ivanstorck.com" target="_blank" rel="noopener noreferrer" color="blue.500">
+                Ivan Storck
+              </Link>
+              , a software engineer and avid paddler based in
               Seattle. NextWeather was born out of a desire for a simple,
               mobile-friendly way to check local conditions before heading out on
               the water.
@@ -84,9 +87,9 @@ export default function AboutTab() {
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               If you have feedback or suggestions for improving the app, please
               reach out on{' '}
-              <a href="https://github.com/ivanoats/nextweather/issues" target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>
+              <Link href="https://github.com/ivanoats/nextweather/issues" target="_blank" rel="noopener noreferrer" color="blue.500">
                 GitHub
-              </a>
+              </Link>
               .
             </Text>
           </VStack>
