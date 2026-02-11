@@ -150,7 +150,8 @@ export default function Home() {
   const fetchData = useCallback(async () => {
     try {
       setError(null)
-      const res = await fetch(`/api/nbdc?station=${station}&tideStation=${tideStation}`)
+      const params = new URLSearchParams({ station, tideStation })
+      const res = await fetch(`/api/nbdc?${params.toString()}`)
       if (!res.ok) throw new Error(`Failed to fetch data (${res.status})`)
       const json: Observations = await res.json()
       setData(json)
