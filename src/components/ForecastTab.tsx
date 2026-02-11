@@ -44,8 +44,8 @@ function formatShortHour(iso: string): string {
 
 /** Parse wind speed string like "10 mph" to a number */
 function parseWindSpeed(ws: string): number {
-  const match = ws.match(/(\d+)/)
-  return match ? parseInt(match[1], 10) : 0
+  const windSpeedMatch = /(\d+)/.exec(ws)
+  return windSpeedMatch ? Number.parseInt(windSpeedMatch[1], 10) : 0
 }
 
 /** Wind speed sparkline chart */
@@ -91,8 +91,8 @@ function WindSparkline({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
           />
           <Tooltip
             contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }}
-            formatter={(value: number) => [`${value} mph`, 'Wind']}
-            labelFormatter={(label: string) => label}
+            formatter={(value?: number) => [`${value ?? 0} mph`, 'Wind']}
+            labelFormatter={(label) => label ?? ''}
           />
           <Area
             type="monotone"
@@ -148,7 +148,7 @@ function ForecastRow({
             <Text fontSize="sm" fontWeight="600" color="gray.700">
               {formatHour(period.startTime)}
             </Text>
-            <Text fontSize="xs" color="gray.400" isTruncated>
+            <Text fontSize="xs" color="gray.400" truncate>
               {period.shortForecast}
             </Text>
           </Box>
