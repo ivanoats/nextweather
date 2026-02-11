@@ -1,5 +1,20 @@
 import axios from 'axios';
 
+/**
+ * @typedef {import('next').NextApiRequest} NextApiRequest
+ * @typedef {import('next').NextApiResponse} NextApiResponse
+ */
+
+/**
+ * @typedef {object} ObservationResponse
+ * @property {number} statusCode
+ * @property {any} body
+ */
+
+/**
+ * @param {NextApiRequest} req
+ * @param {NextApiResponse} res
+ */
 const observations = async (req, res) => {
   const station = req.query.station || 'KSEA'
    try {

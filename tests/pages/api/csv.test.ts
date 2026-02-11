@@ -16,6 +16,7 @@ describe('/api/csv', () => {
         expect(body).toHaveProperty('airTemp');
         // Tide data may vary based on API availability
         expect(body).toHaveProperty('nextTide');
+        expect(body).toHaveProperty('nextTideAfter');
       },
     });
   });
