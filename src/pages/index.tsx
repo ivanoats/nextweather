@@ -143,7 +143,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-  const [activeTab, setActiveTab] = useState<TabId>('forecast')
+  const [activeTab, setActiveTab] = useState<TabId>('conditions')
   const [station, setStation] = useState('WPOW1')
   const [tideStation, setTideStation] = useState('9447130')
 
@@ -174,7 +174,7 @@ export default function Home() {
     setTideStation(newTideStation)
     setData(null)
     setLoading(true)
-    setActiveTab('forecast')
+    setActiveTab('conditions')
   }
 
   return (
@@ -193,7 +193,7 @@ export default function Home() {
         pb="calc(env(safe-area-inset-bottom) + 72px)"
       >
         <Container maxW="480px" px={5} py={6}>
-          {activeTab === 'forecast' && (
+          {activeTab === 'conditions' && (
             <>
               {/* Header */}
               <MotionBox

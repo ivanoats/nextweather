@@ -41,17 +41,17 @@ describe('Tab navigation integration', () => {
 
     renderHome()
 
-    expect(screen.getByRole('tab', { name: 'Forecast' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Conditions' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'About' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Custom' })).toBeInTheDocument()
   })
 
-  it('shows the forecast tab by default', async () => {
+  it('shows the conditions tab by default', async () => {
     ;(globalThis.fetch as jest.Mock).mockReturnValue(new Promise(() => {}))
 
     renderHome()
 
-    expect(screen.getByRole('tab', { name: 'Forecast' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Conditions' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByText('Fetching conditions…')).toBeInTheDocument()
   })
 
@@ -92,7 +92,7 @@ describe('Tab navigation integration', () => {
     expect(screen.queryByText('Wind Speed')).not.toBeInTheDocument()
   })
 
-  it('returns to forecast tab after navigating away', async () => {
+  it('returns to conditions tab after navigating away', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
     ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
@@ -112,12 +112,12 @@ describe('Tab navigation integration', () => {
     await user.click(screen.getByRole('tab', { name: 'About' }))
     expect(screen.getByText('About NextWeather')).toBeInTheDocument()
 
-    // Navigate back to Forecast
-    await user.click(screen.getByRole('tab', { name: 'Forecast' }))
+    // Navigate back to Conditions
+    await user.click(screen.getByRole('tab', { name: 'Conditions' }))
     expect(screen.getByText('Station WPOW1')).toBeInTheDocument()
   })
 
-  it('applies custom station from Custom tab and returns to forecast', async () => {
+  it('applies custom station from Custom tab and returns to Conditions', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
     ;(globalThis.fetch as jest.Mock)
@@ -149,9 +149,9 @@ describe('Tab navigation integration', () => {
     // Apply
     await user.click(screen.getByRole('button', { name: /apply/i }))
 
-    // Should switch back to forecast and re-fetch
+    // Should switch back to conditions and re-fetch
     await waitFor(() => {
-      expect(screen.getByRole('tab', { name: 'Forecast' })).toHaveAttribute('aria-selected', 'true')
+      expect(screen.getByRole('tab', { name: 'Conditions' })).toHaveAttribute('aria-selected', 'true')
     })
 
     // Verify new fetch was made with custom station

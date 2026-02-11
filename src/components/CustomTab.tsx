@@ -119,7 +119,7 @@ export default function CustomTab({
           role="button"
           aria-label="Apply station settings"
         >
-          {saved ? '✓ Applied' : 'Apply & Switch to Forecast'}
+          {saved ? '✓ Applied' : 'Apply & Switch to Conditions'}
         </Flex>
 
         <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
