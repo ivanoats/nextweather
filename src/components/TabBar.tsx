@@ -23,6 +23,8 @@ interface TabBarProps {
 export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
   return (
     <Box
+      as="nav"
+      aria-label="Main navigation"
       position="fixed"
       bottom={0}
       left={0}
@@ -47,8 +49,7 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
               h="100%"
               cursor="pointer"
               onClick={() => onTabChange(tab.id)}
-              role="tab"
-              aria-selected={isActive}
+              aria-current={isActive ? 'page' : undefined}
               aria-label={tab.label}
               _hover={{ bg: 'gray.50' }}
               transition="background 0.15s"
