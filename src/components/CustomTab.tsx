@@ -33,12 +33,10 @@ export default function CustomTab({
     if (!station.trim() || !tideStation.trim()) return
     onApply(station.trim(), tideStation.trim())
     setSaved(true)
-    
     // Clear any existing timeout before setting a new one
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
-    
     timeoutRef.current = setTimeout(() => setSaved(false), 2000)
   }
 
