@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event'
 import { ChakraProvider, defaultSystem } from '@chakra-ui/react'
 import TabBar, { type TabId } from 'src/components/TabBar'
 
-function renderTabBar(activeTab: TabId = 'forecast', onTabChange = jest.fn()) {
+function renderTabBar(activeTab: TabId = 'conditions', onTabChange = jest.fn()) {
   return {
     onTabChange,
     ...render(
@@ -18,10 +18,11 @@ function renderTabBar(activeTab: TabId = 'forecast', onTabChange = jest.fn()) {
 }
 
 describe('TabBar', () => {
-  it('renders navigation with all three tabs', () => {
+  it('renders navigation with all four tabs', () => {
     renderTabBar()
 
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Conditions' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Forecast' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'About' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Custom' })).toBeInTheDocument()
@@ -31,13 +32,13 @@ describe('TabBar', () => {
     renderTabBar('about')
 
     expect(screen.getByRole('tab', { name: 'About' })).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('tab', { name: 'Forecast' })).toHaveAttribute('aria-selected', 'false')
+    expect(screen.getByRole('tab', { name: 'Conditions' })).toHaveAttribute('aria-selected', 'false')
     expect(screen.getByRole('tab', { name: 'Custom' })).toHaveAttribute('aria-selected', 'false')
   })
 
   it('calls onTabChange when a tab is clicked', async () => {
     const user = userEvent.setup()
-    const { onTabChange } = renderTabBar('forecast')
+    const { onTabChange } = renderTabBar('conditions')
 
     await user.click(screen.getByRole('tab', { name: 'About' }))
     expect(onTabChange).toHaveBeenCalledWith('about')
@@ -46,9 +47,9 @@ describe('TabBar', () => {
     expect(onTabChange).toHaveBeenCalledWith('custom')
   })
 
-  it('defaults forecast as the active tab', () => {
+  it('defaults Conditions as the active tab', () => {
     renderTabBar()
 
-    expect(screen.getByRole('tab', { name: 'Forecast' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Conditions' })).toHaveAttribute('aria-selected', 'true')
   })
 })
