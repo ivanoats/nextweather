@@ -10,6 +10,9 @@ import {
   Spinner,
 } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
+import TabBar, { type TabId } from '../components/TabBar'
+import AboutTab from '../components/AboutTab'
+import CustomTab from '../components/CustomTab'
 
 const MotionBox = motion.create(Box)
 const MotionFlex = motion.create(Flex)
@@ -140,11 +143,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [activeTab, setActiveTab] = useState<TabId>('forecast')
+  const [station, setStation] = useState('WPOW1')
+  const [tideStation, setTideStation] = useState('9447130')
 
   const fetchData = useCallback(async () => {
     try {
       setError(null)
-      const res = await fetch('/api/nbdc')
+      const res = await fetch(`/api/nbdc?station=${station}&tideStation=${tideStation}`)
       if (!res.ok) throw new Error(`Failed to fetch data (${res.status})`)
       const json: Observations = await res.json()
       setData(json)
@@ -154,13 +160,21 @@ export default function Home() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [station, tideStation])
 
   useEffect(() => {
     fetchData()
     const interval = setInterval(fetchData, REFRESH_INTERVAL_MS)
     return () => clearInterval(interval)
   }, [fetchData])
+
+  function handleApplyCustom(newStation: string, newTideStation: string) {
+    setStation(newStation)
+    setTideStation(newTideStation)
+    setData(null)
+    setLoading(true)
+    setActiveTab('forecast')
+  }
 
   return (
     <>
@@ -175,170 +189,186 @@ export default function Home() {
         minH="100dvh"
         bg="gray.50"
         pt="env(safe-area-inset-top)"
-        pb="env(safe-area-inset-bottom)"
+        pb="calc(env(safe-area-inset-bottom) + 72px)"
       >
         <Container maxW="480px" px={5} py={6}>
-          {/* Header */}
-          <MotionBox
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            mb={6}
-          >
-            <Flex justify="space-between" align="center">
-              <Box>
-                <Text fontSize="2xl" fontWeight="800" color="gray.800" lineHeight="1.1">
-                  West Point Wind
-                </Text>
-                <Text fontSize="xs" fontWeight="500" color="gray.400" mt={0.5}>
-                  {data?.stationId ? `Station ${data.stationId}` : 'Loading station…'}
-                </Text>
-              </Box>
-              {lastUpdated && (
-                <Text fontSize="xs" color="gray.400">
-                  {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Text>
-              )}
-            </Flex>
-          </MotionBox>
-
-          {/* Loading state */}
-          {loading && !data && (
-            <Flex justify="center" align="center" minH="300px">
-              <VStack gap={3}>
-                <Spinner size="lg" color="blue.400" />
-                <Text fontSize="sm" color="gray.400">Fetching conditions…</Text>
-              </VStack>
-            </Flex>
-          )}
-
-          {/* Error state */}
-          {error && !data && (
-            <Flex justify="center" align="center" minH="300px">
-              <VStack gap={3}>
-                <Text fontSize="lg" color="red.400" fontWeight="600">⚠</Text>
-                <Text fontSize="sm" color="gray.500" textAlign="center">{error}</Text>
-                <Text
-                  as="button"
-                  fontSize="sm"
-                  fontWeight="600"
-                  color="blue.500"
-                  onClick={fetchData}
-                  cursor="pointer"
-                >
-                  Try again
-                </Text>
-              </VStack>
-            </Flex>
-          )}
-
-          <AnimatePresence>
-            {data && (
-              <VStack gap={4} align="stretch">
-                {/* Wind hero section */}
-                <MotionBox
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                  bg="white"
-                  borderRadius="2xl"
-                  boxShadow="0 1px 3px rgba(0,0,0,0.08)"
-                  px={6}
-                  py={5}
-                >
-                  <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider">
-                    Wind Speed
-                  </Text>
-                  <Flex align="center" justify="space-between" mt={2}>
-                    <HStack gap={2} alignItems="baseline">
-                      <Text fontSize="6xl" fontWeight="800" color="gray.800" lineHeight="1">
-                        {data.windSpeed === undefined ? '—' : Math.round(data.windSpeed)}
-                      </Text>
-                      <VStack gap={0} alignItems="flex-start">
-                        <Text fontSize="lg" fontWeight="500" color="gray.400">mph</Text>
-                        {data.windDirection !== undefined && (
-                          <Text fontSize="sm" fontWeight="600" color="blue.400">
-                            {degToCompass(data.windDirection)} {data.windDirection}°
-                          </Text>
-                        )}
-                      </VStack>
-                    </HStack>
-                    <WindCompass direction={data.windDirection} />
-                  </Flex>
-                </MotionBox>
-
-                {/* Gust and Temperature row */}
-                <Flex gap={4}>
-                  <DataCard label="Gusts" value={data.windGust} unit="mph" delay={0.1} />
-                  <DataCard
-                    label="Air Temp"
-                    value={data.airTemp === undefined ? undefined : Math.round(data.airTemp)}
-                    unit="°F"
-                    delay={0.2}
-                  />
-                </Flex>
-
-                {/* Tides section */}
-                <MotionBox
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  bg="white"
-                  borderRadius="2xl"
-                  boxShadow="0 1px 3px rgba(0,0,0,0.08)"
-                  px={5}
-                  py={4}
-                >
-                  <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={2}>
-                    Tides
-                  </Text>
-                  <TideRow label="Current" value={data.currentTide ? `${data.currentTide} ft` : undefined} delay={0.35} />
-                  <TideRow label="Next" value={data.nextTide} delay={0.4} />
+          {activeTab === 'forecast' && (
+            <>
+              {/* Header */}
+              <MotionBox
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                mb={6}
+              >
+                <Flex justify="space-between" align="center">
                   <Box>
-                    <MotionFlex
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 0.45 }}
-                      justify="space-between"
-                      align="center"
-                      py={3}
-                    >
-                      <Text fontSize="sm" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider">
-                        After
-                      </Text>
-                      <Text fontSize="md" fontWeight="600" color="gray.700" textAlign="right" maxW="65%">
-                        {data.nextTideAfter || '—'}
-                      </Text>
-                    </MotionFlex>
+                    <Text fontSize="2xl" fontWeight="800" color="gray.800" lineHeight="1.1">
+                      West Point Wind
+                    </Text>
+                    <Text fontSize="xs" fontWeight="500" color="gray.400" mt={0.5}>
+                      {data?.stationId ? `Station ${data.stationId}` : 'Loading station…'}
+                    </Text>
                   </Box>
-                </MotionBox>
+                  {lastUpdated && (
+                    <Text fontSize="xs" color="gray.400">
+                      {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </Text>
+                  )}
+                </Flex>
+              </MotionBox>
 
-                {/* Refresh button */}
-                <MotionBox
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.5 }}
-                  textAlign="center"
-                  pt={2}
-                  pb={4}
-                >
-                  <Text
-                    as="button"
-                    fontSize="sm"
-                    fontWeight="600"
-                    color="blue.500"
-                    onClick={fetchData}
-                    cursor="pointer"
-                    _hover={{ color: 'blue.600' }}
-                  >
-                    ↻ Refresh
-                  </Text>
-                </MotionBox>
-              </VStack>
-            )}
-          </AnimatePresence>
+              {/* Loading state */}
+              {loading && !data && (
+                <Flex justify="center" align="center" minH="300px">
+                  <VStack gap={3}>
+                    <Spinner size="lg" color="blue.400" />
+                    <Text fontSize="sm" color="gray.400">Fetching conditions…</Text>
+                  </VStack>
+                </Flex>
+              )}
+
+              {/* Error state */}
+              {error && !data && (
+                <Flex justify="center" align="center" minH="300px">
+                  <VStack gap={3}>
+                    <Text fontSize="lg" color="red.400" fontWeight="600">⚠</Text>
+                    <Text fontSize="sm" color="gray.500" textAlign="center">{error}</Text>
+                    <Text
+                      as="button"
+                      fontSize="sm"
+                      fontWeight="600"
+                      color="blue.500"
+                      onClick={fetchData}
+                      cursor="pointer"
+                    >
+                      Try again
+                    </Text>
+                  </VStack>
+                </Flex>
+              )}
+
+              <AnimatePresence>
+                {data && (
+                  <VStack gap={4} align="stretch">
+                    {/* Wind hero section */}
+                    <MotionBox
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      bg="white"
+                      borderRadius="2xl"
+                      boxShadow="0 1px 3px rgba(0,0,0,0.08)"
+                      px={6}
+                      py={5}
+                    >
+                      <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider">
+                        Wind Speed
+                      </Text>
+                      <Flex align="center" justify="space-between" mt={2}>
+                        <HStack gap={2} alignItems="baseline">
+                          <Text fontSize="6xl" fontWeight="800" color="gray.800" lineHeight="1">
+                            {data.windSpeed === undefined ? '—' : Math.round(data.windSpeed)}
+                          </Text>
+                          <VStack gap={0} alignItems="flex-start">
+                            <Text fontSize="lg" fontWeight="500" color="gray.400">mph</Text>
+                            {data.windDirection !== undefined && (
+                              <Text fontSize="sm" fontWeight="600" color="blue.400">
+                                {degToCompass(data.windDirection)} {data.windDirection}°
+                              </Text>
+                            )}
+                          </VStack>
+                        </HStack>
+                        <WindCompass direction={data.windDirection} />
+                      </Flex>
+                    </MotionBox>
+
+                    {/* Gust and Temperature row */}
+                    <Flex gap={4}>
+                      <DataCard label="Gusts" value={data.windGust} unit="mph" delay={0.1} />
+                      <DataCard
+                        label="Air Temp"
+                        value={data.airTemp === undefined ? undefined : Math.round(data.airTemp)}
+                        unit="°F"
+                        delay={0.2}
+                      />
+                    </Flex>
+
+                    {/* Tides section */}
+                    <MotionBox
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.3 }}
+                      bg="white"
+                      borderRadius="2xl"
+                      boxShadow="0 1px 3px rgba(0,0,0,0.08)"
+                      px={5}
+                      py={4}
+                    >
+                      <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={2}>
+                        Tides
+                      </Text>
+                      <TideRow label="Current" value={data.currentTide ? `${data.currentTide} ft` : undefined} delay={0.35} />
+                      <TideRow label="Next" value={data.nextTide} delay={0.4} />
+                      <Box>
+                        <MotionFlex
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.4, delay: 0.45 }}
+                          justify="space-between"
+                          align="center"
+                          py={3}
+                        >
+                          <Text fontSize="sm" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider">
+                            After
+                          </Text>
+                          <Text fontSize="md" fontWeight="600" color="gray.700" textAlign="right" maxW="65%">
+                            {data.nextTideAfter || '—'}
+                          </Text>
+                        </MotionFlex>
+                      </Box>
+                    </MotionBox>
+
+                    {/* Refresh button */}
+                    <MotionBox
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.4, delay: 0.5 }}
+                      textAlign="center"
+                      pt={2}
+                      pb={4}
+                    >
+                      <Text
+                        as="button"
+                        fontSize="sm"
+                        fontWeight="600"
+                        color="blue.500"
+                        onClick={fetchData}
+                        cursor="pointer"
+                        _hover={{ color: 'blue.600' }}
+                      >
+                        ↻ Refresh
+                      </Text>
+                    </MotionBox>
+                  </VStack>
+                )}
+              </AnimatePresence>
+            </>
+          )}
+
+          {activeTab === 'about' && <AboutTab />}
+
+          {activeTab === 'custom' && (
+            <CustomTab
+              initialStation={station}
+              initialTideStation={tideStation}
+              onApply={handleApplyCustom}
+            />
+          )}
         </Container>
       </Box>
+
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
     </>
   )
 }
