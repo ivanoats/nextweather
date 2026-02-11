@@ -150,7 +150,7 @@ NextWeather relies on publicly available NOAA data:
 
 ## License
 
-This project is copyright 2026 Ivan Storck. See the repository for license details.
+This project is not currently licensed for public use or redistribution. All rights reserved © 2026 Ivan Storck. If you are interested in using this code, please contact the author to discuss licensing terms.
 
 ---
 
