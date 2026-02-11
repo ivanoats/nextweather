@@ -74,7 +74,7 @@ graph LR
 
 ### Prerequisites
 
-- **Node.js** ≥ 18
+- **Node.js** 22.x (matches `.nvmrc`)
 - **npm** ≥ 9
 
 ### Installation
