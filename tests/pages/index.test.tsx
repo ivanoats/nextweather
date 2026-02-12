@@ -80,6 +80,10 @@ describe('Home page', () => {
     // Compass SVG cardinal labels
     expect(screen.getByText('N')).toBeInTheDocument()
     expect(screen.getByText('E')).toBeInTheDocument()
+
+    // Logo
+    const logo = screen.getByAltText('west point wind')
+    expect(logo).toBeInTheDocument()
   })
 
   it('shows an error state when fetch fails', async () => {
