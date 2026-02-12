@@ -1,19 +1,19 @@
-const nextConfig = require("eslint-config-next");
-const prettierConfig = require("eslint-config-prettier");
+const nextConfig = require('eslint-config-next/core-web-vitals');
+const prettierConfig = require('eslint-config-prettier');
 
 module.exports = [
   {
     ignores: [
-      "**/node_modules/**",
-      "**/.next/**",
-      "**/out/**",
-      "**/build/**",
-      "**/dist/**",
-      "**/storybook-static/**",
-      "**/out_publish/**",
-      "**/coverage/**",
-      "**/.netlify/**",
-      "**/.vercel/**",
+      '**/node_modules/**',
+      '**/.next/**',
+      '**/out/**',
+      '**/build/**',
+      '**/dist/**',
+      '**/storybook-static/**',
+      '**/out_publish/**',
+      '**/coverage/**',
+      '**/.netlify/**',
+      '**/.vercel/**',
     ],
   },
   ...nextConfig,
