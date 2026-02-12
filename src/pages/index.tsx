@@ -1,5 +1,6 @@
 import Head from 'next/head'
-import { useEffect, useState, useCallback } from 'react'
+import dynamic from 'next/dynamic'
+import { useEffect, useState, useCallback, memo } from 'react'
 import {
   Box,
   Container,
@@ -11,9 +12,17 @@ import {
 } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TabBar, { type TabId } from '../components/TabBar'
-import AboutTab from '../components/AboutTab'
-import CustomTab from '../components/CustomTab'
-import ForecastTab from '../components/ForecastTab'
+
+// Lazy load tab components to reduce initial bundle size
+const AboutTab = dynamic(() => import('../components/AboutTab'), {
+  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
+})
+const CustomTab = dynamic(() => import('../components/CustomTab'), {
+  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
+})
+const ForecastTab = dynamic(() => import('../components/ForecastTab'), {
+  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
+})
 
 const MotionBox = motion.create(Box)
 const MotionFlex = motion.create(Flex)
@@ -39,7 +48,7 @@ function degToCompass(deg: number): string {
 }
 
 /** Simple SVG compass arrow */
-function WindCompass({ direction }: Readonly<{ direction?: number }>) {
+const WindCompass = memo(function WindCompass({ direction }: Readonly<{ direction?: number }>) {
   if (direction === undefined) return null
   return (
     <Box position="relative" w="80px" h="80px" flexShrink={0}>
@@ -58,7 +67,7 @@ function WindCompass({ direction }: Readonly<{ direction?: number }>) {
       </svg>
     </Box>
   )
-}
+})
 
 /** Format a display value (round numbers, pass strings through) */
 function formatValue(value: string | number): string | number {
@@ -66,7 +75,7 @@ function formatValue(value: string | number): string | number {
 }
 
 /** Animated data card */
-function DataCard({
+const DataCard = memo(function DataCard({
   label,
   value,
   unit,
@@ -112,10 +121,10 @@ function DataCard({
       </HStack>
     </MotionBox>
   )
-}
+})
 
 /** Tide row */
-function TideRow({ label, value, delay = 0 }: Readonly<{ label: string; value?: string; delay?: number }>) {
+const TideRow = memo(function TideRow({ label, value, delay = 0 }: Readonly<{ label: string; value?: string; delay?: number }>) {
   return (
     <MotionFlex
       initial={{ opacity: 0, x: -10 }}
@@ -135,7 +144,7 @@ function TideRow({ label, value, delay = 0 }: Readonly<{ label: string; value?: 
       </Text>
     </MotionFlex>
   )
-}
+})
 
 const REFRESH_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
 
