@@ -48,6 +48,10 @@ interface ObservationFeature {
   properties: ObservationProperties;
 }
 
+/**
+ * NWS observation response following GeoJSON-LD format.
+ * @see https://geojson.org/geojson-ld/ for GeoJSON-LD specification
+ */
 interface ObservationFeatureCollection {
   '@context': (string | object)[];
   type: 'FeatureCollection';
