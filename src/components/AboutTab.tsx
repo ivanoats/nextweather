@@ -13,6 +13,14 @@ export default function AboutTab() {
     >
       <VStack gap={4} align="stretch">
         <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
+          <Box flexShrink={0}>
+              <Image
+                src="/west-point-logo.png"
+                alt="west point wind"
+                width={32}
+                height={32}
+              />
+                    </Box>
           <Text fontSize="xl" fontWeight="800" color="gray.800" mb={3}>
             About WestPointWind
           </Text>
