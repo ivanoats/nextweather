@@ -43,11 +43,11 @@ export const Page = ({ user, onLogin, onLogout, onCreateAccount }: PageProps) =>
         <a href="https://storybook.js.org/tutorials/" target="_blank" rel="noopener noreferrer">
           Storybook tutorials
         </a>
-        . Read more in the{' '}
+        {'. Read more in the '}
         <a href="https://storybook.js.org/docs" target="_blank" rel="noopener noreferrer">
           docs
         </a>
-        .
+        {'.'}
       </p>
       <div className="tip-wrapper">
         <span className="tip">Tip</span> Adjust the width of the canvas with the{' '}
