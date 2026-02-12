@@ -48,7 +48,7 @@ interface ObservationFeature {
   properties: ObservationProperties;
 }
 
-interface GeoJsonLdContext {
+interface ObservationFeatureCollection {
   '@context': (string | object)[];
   type: 'FeatureCollection';
   features: ObservationFeature[];
@@ -56,14 +56,17 @@ interface GeoJsonLdContext {
 
 interface SuccessResponse {
   statusCode: 200;
-  body: GeoJsonLdContext;
+  body: ObservationFeatureCollection;
 }
 
 interface ErrorResponse {
   statusCode: 500;
   body: {
     message: string;
-    error: unknown;
+    error: {
+      name: string;
+      message: string;
+    };
   };
 }
 
@@ -83,11 +86,15 @@ const observations = async (
       body: obs.data,
     });
   } catch (error) {
+    const errorDetails = error instanceof Error 
+      ? { name: error.name, message: error.message }
+      : { name: 'UnknownError', message: 'An error occurred' };
+    
     res.json({
       statusCode: 500,
       body: {
-        message: error instanceof Error ? error.message : 'An error occurred',
-        error,
+        message: errorDetails.message,
+        error: errorDetails,
       },
     });
   }
