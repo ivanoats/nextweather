@@ -56,7 +56,9 @@ describe('AboutTab', () => {
     renderAboutTab()
     const image = screen.getByAltText('Ivan Storck paddling an outrigger canoe')
     expect(image).toBeInTheDocument()
-    expect(image).toHaveAttribute('src', '/ivan-on-oc.jpg')
+    // Next.js Image component transforms the src URL
+    expect(image).toHaveAttribute('src')
+    expect(image.getAttribute('src')).toContain('ivan-on-oc.jpg')
   })
 
   it('renders link to creator website', () => {

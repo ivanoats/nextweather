@@ -1,6 +1,7 @@
 import Head from 'next/head'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, memo } from 'react'
 import {
   Box,
   Container,
@@ -12,9 +13,17 @@ import {
 } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TabBar, { type TabId } from '../components/TabBar'
-import AboutTab from '../components/AboutTab'
-import CustomTab from '../components/CustomTab'
-import ForecastTab from '../components/ForecastTab'
+
+// Lazy load tab components to reduce initial bundle size
+const AboutTab = dynamic(() => import('../components/AboutTab'), {
+  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
+})
+const CustomTab = dynamic(() => import('../components/CustomTab'), {
+  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
+})
+const ForecastTab = dynamic(() => import('../components/ForecastTab'), {
+  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
+})
 
 const MotionBox = motion.create(Box)
 const MotionFlex = motion.create(Flex)
@@ -40,7 +49,7 @@ function degToCompass(deg: number): string {
 }
 
 /** Simple SVG compass arrow */
-function WindCompass({ direction }: Readonly<{ direction?: number }>) {
+const WindCompass = memo(function WindCompass({ direction }: Readonly<{ direction?: number }>) {
   if (direction === undefined) return null
   return (
     <Box position="relative" w="80px" h="80px" flexShrink={0}>
@@ -59,7 +68,7 @@ function WindCompass({ direction }: Readonly<{ direction?: number }>) {
       </svg>
     </Box>
   )
-}
+})
 
 /** Format a display value (round numbers, pass strings through) */
 function formatValue(value: string | number): string | number {
@@ -67,7 +76,7 @@ function formatValue(value: string | number): string | number {
 }
 
 /** Animated data card */
-function DataCard({
+const DataCard = memo(function DataCard({
   label,
   value,
   unit,
@@ -82,9 +91,9 @@ function DataCard({
 }>) {
   return (
     <MotionBox
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.3, delay }}
       bg="white"
       borderRadius="2xl"
       boxShadow="0 1px 3px rgba(0,0,0,0.08)"
@@ -113,15 +122,15 @@ function DataCard({
       </HStack>
     </MotionBox>
   )
-}
+})
 
 /** Tide row */
-function TideRow({ label, value, delay = 0 }: Readonly<{ label: string; value?: string; delay?: number }>) {
+const TideRow = memo(function TideRow({ label, value, delay = 0 }: Readonly<{ label: string; value?: string; delay?: number }>) {
   return (
     <MotionFlex
-      initial={{ opacity: 0, x: -10 }}
+      initial={{ opacity: 0, x: -5 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, delay }}
+      transition={{ duration: 0.2, delay }}
       justify="space-between"
       align="center"
       py={3}
@@ -136,7 +145,7 @@ function TideRow({ label, value, delay = 0 }: Readonly<{ label: string; value?: 
       </Text>
     </MotionFlex>
   )
-}
+})
 
 const REFRESH_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
 
@@ -202,9 +211,9 @@ export default function Home() {
             <>
               {/* Header */}
               <MotionBox
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
                 mb={6}
               >
                 <Flex justify="space-between" align="center">
@@ -216,6 +225,7 @@ export default function Home() {
                         width={48}
                         height={48}
                         priority
+                        style={{ display: 'block' }}
                       />
                     </Box>
                     <Box>
@@ -270,9 +280,9 @@ export default function Home() {
                   <VStack gap={4} align="stretch">
                     {/* Wind hero section */}
                     <MotionBox
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
                       bg="white"
                       borderRadius="2xl"
                       boxShadow="0 1px 3px rgba(0,0,0,0.08)"
@@ -302,20 +312,20 @@ export default function Home() {
 
                     {/* Gust and Temperature row */}
                     <Flex gap={4}>
-                      <DataCard label="Gusts" value={data.windGust} unit="mph" delay={0.1} />
+                      <DataCard label="Gusts" value={data.windGust} unit="mph" delay={0.05} />
                       <DataCard
                         label="Air Temp"
                         value={data.airTemp === undefined ? undefined : Math.round(data.airTemp)}
                         unit="°F"
-                        delay={0.2}
+                        delay={0.1}
                       />
                     </Flex>
 
                     {/* Tides section */}
                     <MotionBox
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.3 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.15 }}
                       bg="white"
                       borderRadius="2xl"
                       boxShadow="0 1px 3px rgba(0,0,0,0.08)"
@@ -325,13 +335,13 @@ export default function Home() {
                       <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={2}>
                         Tides
                       </Text>
-                      <TideRow label="Current" value={data.currentTide ? `${data.currentTide} ft` : undefined} delay={0.35} />
-                      <TideRow label="Next" value={data.nextTide} delay={0.4} />
+                      <TideRow label="Current" value={data.currentTide ? `${data.currentTide} ft` : undefined} delay={0.18} />
+                      <TideRow label="Next" value={data.nextTide} delay={0.21} />
                       <Box>
                         <MotionFlex
-                          initial={{ opacity: 0, x: -10 }}
+                          initial={{ opacity: 0, x: -5 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.4, delay: 0.45 }}
+                          transition={{ duration: 0.2, delay: 0.24 }}
                           justify="space-between"
                           align="center"
                           py={3}
@@ -350,7 +360,7 @@ export default function Home() {
                     <MotionBox
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ duration: 0.4, delay: 0.5 }}
+                      transition={{ duration: 0.3, delay: 0.27 }}
                       textAlign="center"
                       pt={2}
                       pb={4}

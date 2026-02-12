@@ -1,15 +1,15 @@
-import { Box, Image, Link, Text, VStack, HStack } from '@chakra-ui/react'
+import { Box, Link, Text, VStack, HStack } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
-
+import Image from 'next/image'
 const MotionBox = motion.create(Box)
 
 /** About tab content describing the NextWeather app */
 export default function AboutTab() {
   return (
     <MotionBox
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
     >
       <VStack gap={4} align="stretch">
         <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
@@ -74,16 +74,14 @@ export default function AboutTab() {
             About the Creator
           </Text>
           <VStack gap={3} align="stretch">
-            <Image
-              src="/ivan-on-oc.jpg"
-              alt="Ivan Storck paddling an outrigger canoe"
-              borderRadius="xl"
-              objectFit="cover"
-              maxH="300px"
-              w="100%"
-              loading="lazy"
-              decoding="async"
-            />
+            <Box position="relative" w="100%" h="300px" borderRadius="xl" overflow="hidden">
+              <Image
+                src="/ivan-on-oc.jpg"
+                alt="Ivan Storck paddling an outrigger canoe"
+                fill
+                style={{ objectFit: 'cover' }}
+              />
+            </Box>
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               Developed by{' '}
               <Link href="https://ivanstorck.com" target="_blank" rel="noopener noreferrer" color="blue.500">

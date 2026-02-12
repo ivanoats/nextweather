@@ -131,9 +131,9 @@ function ForecastRow({
       as="li"
       role="listitem"
       aria-label={summary}
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3, delay }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, delay }}
       py={3}
       borderBottom="1px solid"
       borderColor="gray.100"
@@ -201,9 +201,9 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
 
   return (
     <MotionBox
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
     >
       <VStack gap={4} align="stretch">
         <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
@@ -271,7 +271,7 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
                   </Text>
                   <Box as="ul" role="list" aria-label={`Forecast for ${day}`} listStyleType="none" m={0} p={0}>
                     {periods.map((period, i) => (
-                      <ForecastRow key={period.startTime} period={period} delay={i * 0.03} />
+                      <ForecastRow key={period.startTime} period={period} delay={i * 0.01} />
                     ))}
                   </Box>
                 </Box>
