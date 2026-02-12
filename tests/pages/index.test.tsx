@@ -142,7 +142,7 @@ describe('Home page', () => {
   })
 
   it('displays dash placeholders when optional fields are missing', async () => {
-    const partial = { stationId: 'WPOW1', windSpeed: 5.0 }
+    const partial = { stationId: 'WPOW1', windSpeed: 5 }
 
     ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,

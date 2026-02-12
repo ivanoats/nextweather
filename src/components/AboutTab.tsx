@@ -14,11 +14,11 @@ export default function AboutTab() {
       <VStack gap={4} align="stretch">
         <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
           <Text fontSize="xl" fontWeight="800" color="gray.800" mb={3}>
-            About NextWeather
+            About WestPointWind
           </Text>
           <VStack gap={3} align="stretch">
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
-              NextWeather is a weather station data aggregator built for
+              WestPointWind is a weather station data aggregator built for
               human-powered watercraft enthusiasts — kayakers, sailors, and
               paddleboarders who need accurate wind and tide conditions at a
               glance.
@@ -80,7 +80,7 @@ export default function AboutTab() {
                 Ivan Storck
               </Link>
               , a software engineer and avid paddler based in
-              Seattle. NextWeather was born out of a desire for a simple,
+              Seattle. WestPointWind was born out of a desire for a simple,
               mobile-friendly way to check local conditions before heading out on
               the water.
             </Text>
