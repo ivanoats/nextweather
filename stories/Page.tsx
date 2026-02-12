@@ -31,7 +31,7 @@ export const Page = ({ user, onLogin, onLogout, onCreateAccount }: PageProps) =>
       <ul>
         <li>
           Use a higher-level connected component. Storybook helps you compose such data from the
-          "args" of child component stories
+          &quot;args&quot; of child component stories
         </li>
         <li>
           Assemble data in the page component from your services. You can mock these services out
@@ -43,11 +43,11 @@ export const Page = ({ user, onLogin, onLogout, onCreateAccount }: PageProps) =>
         <a href="https://storybook.js.org/tutorials/" target="_blank" rel="noopener noreferrer">
           Storybook tutorials
         </a>
-        . Read more in the{' '}
+        {'. Read more in the '}
         <a href="https://storybook.js.org/docs" target="_blank" rel="noopener noreferrer">
           docs
         </a>
-        .
+        {'.'}
       </p>
       <div className="tip-wrapper">
         <span className="tip">Tip</span> Adjust the width of the canvas with the{' '}
