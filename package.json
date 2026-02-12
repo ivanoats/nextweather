@@ -8,7 +8,7 @@
     "test": "jest",
     "start": "next start",
     "commit": "cz",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
