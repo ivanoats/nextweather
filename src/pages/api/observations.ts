@@ -63,7 +63,7 @@ interface ErrorResponse {
   statusCode: 500;
   body: {
     message: string;
-    error?: unknown;
+    error: unknown;
   };
 }
 
