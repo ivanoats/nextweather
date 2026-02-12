@@ -1,4 +1,4 @@
-import { Box, Image, Link, Text, VStack } from '@chakra-ui/react'
+import { Box, Image, Link, Text, VStack, HStack } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
 const MotionBox = motion.create(Box)
@@ -13,6 +13,7 @@ export default function AboutTab() {
     >
       <VStack gap={4} align="stretch">
         <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
+          <HStack gap={7} align="center">
           <Box flexShrink={0}>
               <Image
                 src="/west-point-logo.png"
@@ -20,10 +21,11 @@ export default function AboutTab() {
                 width={32}
                 height={32}
               />
-                    </Box>
+            </Box>
           <Text fontSize="xl" fontWeight="800" color="gray.800" mb={3}>
             About WestPointWind
           </Text>
+          </HStack>
           <VStack gap={3} align="stretch">
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               WestPointWind is a weather station data aggregator built for
