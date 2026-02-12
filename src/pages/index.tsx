@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import { useEffect, useState, useCallback } from 'react'
 import {
   Box,
@@ -207,14 +208,25 @@ export default function Home() {
                 mb={6}
               >
                 <Flex justify="space-between" align="center">
-                  <Box>
-                    <Text fontSize="2xl" fontWeight="800" color="gray.800" lineHeight="1.1">
-                      West Point Wind
-                    </Text>
-                    <Text fontSize="xs" fontWeight="500" color="gray.400" mt={0.5}>
-                      {data?.stationId ? `Station ${data.stationId}` : 'Loading station…'}
-                    </Text>
-                  </Box>
+                  <HStack gap={3}>
+                    <Box flexShrink={0}>
+                      <Image
+                        src="/west-point-logo.png"
+                        alt="west point wind"
+                        width={48}
+                        height={48}
+                        priority
+                      />
+                    </Box>
+                    <Box>
+                      <Text fontSize="2xl" fontWeight="800" color="gray.800" lineHeight="1.1">
+                        West Point Wind
+                      </Text>
+                      <Text fontSize="xs" fontWeight="500" color="gray.400" mt={0.5}>
+                        {data?.stationId ? `Station ${data.stationId}` : 'Loading station…'}
+                      </Text>
+                    </Box>
+                  </HStack>
                   {lastUpdated && (
                     <Text fontSize="xs" color="gray.400">
                       {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

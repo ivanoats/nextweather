@@ -16,7 +16,7 @@ function renderAboutTab() {
 describe('AboutTab', () => {
   it('renders the heading', () => {
     renderAboutTab()
-    expect(screen.getByText('About NextWeather')).toBeInTheDocument()
+    expect(screen.getByText('About WestPointWind')).toBeInTheDocument()
   })
 
   it('describes the app purpose', () => {
