@@ -78,9 +78,9 @@ export default function AboutTab() {
               <Image
                 src="/ivan-on-oc.jpg"
                 alt="Ivan Storck paddling an outrigger canoe"
-                fill
+                w="100%"
+                h="100%"
                 style={{ objectFit: 'cover' }}
-                sizes="(max-width: 480px) 100vw, 480px"
               />
             </Box>
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
