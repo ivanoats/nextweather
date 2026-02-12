@@ -72,7 +72,6 @@ export default function AboutTab() {
                 fill
                 style={{ objectFit: 'cover' }}
                 sizes="(max-width: 480px) 100vw, 480px"
-                priority={false}
               />
             </Box>
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
