@@ -1,6 +1,5 @@
 import { Box, Image, Link, Text, VStack, HStack } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 
 const MotionBox = motion.create(Box)
 
