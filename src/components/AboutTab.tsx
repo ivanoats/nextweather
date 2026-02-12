@@ -1,6 +1,6 @@
-import { Box, Image, Link, Text, VStack, HStack } from '@chakra-ui/react'
+import { Box, Link, Text, VStack, HStack } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
-
+import Image from 'next/image'
 const MotionBox = motion.create(Box)
 
 /** About tab content describing the NextWeather app */
@@ -78,8 +78,7 @@ export default function AboutTab() {
               <Image
                 src="/ivan-on-oc.jpg"
                 alt="Ivan Storck paddling an outrigger canoe"
-                w="100%"
-                h="100%"
+                fill
                 style={{ objectFit: 'cover' }}
               />
             </Box>
