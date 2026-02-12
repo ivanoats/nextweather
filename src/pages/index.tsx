@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import { useEffect, useState, useCallback, memo } from 'react'
 import {
   Box,
@@ -224,6 +225,7 @@ export default function Home() {
                         width={48}
                         height={48}
                         priority
+                        style={{ display: 'block' }}
                       />
                     </Box>
                     <Box>
