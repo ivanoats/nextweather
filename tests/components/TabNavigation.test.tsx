@@ -70,7 +70,7 @@ describe('Tab navigation integration', () => {
 
     await user.click(screen.getByRole('tab', { name: 'About' }))
 
-    expect(screen.getByText('About NextWeather')).toBeInTheDocument()
+    expect(screen.getByText('About WestPointWind')).toBeInTheDocument()
     expect(screen.queryByText('Wind Speed')).not.toBeInTheDocument()
   })
 
@@ -111,7 +111,7 @@ describe('Tab navigation integration', () => {
 
     // Navigate to About
     await user.click(screen.getByRole('tab', { name: 'About' }))
-    expect(screen.getByText('About NextWeather')).toBeInTheDocument()
+    expect(screen.getByText('About WestPointWind')).toBeInTheDocument()
 
     // Navigate back to Conditions
     await user.click(screen.getByRole('tab', { name: 'Conditions' }))

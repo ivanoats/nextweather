@@ -80,6 +80,10 @@ describe('Home page', () => {
     // Compass SVG cardinal labels
     expect(screen.getByText('N')).toBeInTheDocument()
     expect(screen.getByText('E')).toBeInTheDocument()
+
+    // Logo
+    const logo = screen.getByAltText('west point wind')
+    expect(logo).toBeInTheDocument()
   })
 
   it('shows an error state when fetch fails', async () => {
@@ -138,7 +142,7 @@ describe('Home page', () => {
   })
 
   it('displays dash placeholders when optional fields are missing', async () => {
-    const partial = { stationId: 'WPOW1', windSpeed: 5.0 }
+    const partial = { stationId: 'WPOW1', windSpeed: 5 }
 
     ;(globalThis.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
