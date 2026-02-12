@@ -90,9 +90,9 @@ const DataCard = memo(function DataCard({
 }>) {
   return (
     <MotionBox
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.3, delay }}
       bg="white"
       borderRadius="2xl"
       boxShadow="0 1px 3px rgba(0,0,0,0.08)"
@@ -127,9 +127,9 @@ const DataCard = memo(function DataCard({
 const TideRow = memo(function TideRow({ label, value, delay = 0 }: Readonly<{ label: string; value?: string; delay?: number }>) {
   return (
     <MotionFlex
-      initial={{ opacity: 0, x: -10 }}
+      initial={{ opacity: 0, x: -5 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, delay }}
+      transition={{ duration: 0.2, delay }}
       justify="space-between"
       align="center"
       py={3}
@@ -210,9 +210,9 @@ export default function Home() {
             <>
               {/* Header */}
               <MotionBox
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
                 mb={6}
               >
                 <Flex justify="space-between" align="center">
@@ -267,9 +267,9 @@ export default function Home() {
                   <VStack gap={4} align="stretch">
                     {/* Wind hero section */}
                     <MotionBox
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
                       bg="white"
                       borderRadius="2xl"
                       boxShadow="0 1px 3px rgba(0,0,0,0.08)"
@@ -299,20 +299,20 @@ export default function Home() {
 
                     {/* Gust and Temperature row */}
                     <Flex gap={4}>
-                      <DataCard label="Gusts" value={data.windGust} unit="mph" delay={0.1} />
+                      <DataCard label="Gusts" value={data.windGust} unit="mph" delay={0.05} />
                       <DataCard
                         label="Air Temp"
                         value={data.airTemp === undefined ? undefined : Math.round(data.airTemp)}
                         unit="°F"
-                        delay={0.2}
+                        delay={0.1}
                       />
                     </Flex>
 
                     {/* Tides section */}
                     <MotionBox
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.3 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.15 }}
                       bg="white"
                       borderRadius="2xl"
                       boxShadow="0 1px 3px rgba(0,0,0,0.08)"
@@ -322,13 +322,13 @@ export default function Home() {
                       <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={2}>
                         Tides
                       </Text>
-                      <TideRow label="Current" value={data.currentTide ? `${data.currentTide} ft` : undefined} delay={0.35} />
-                      <TideRow label="Next" value={data.nextTide} delay={0.4} />
+                      <TideRow label="Current" value={data.currentTide ? `${data.currentTide} ft` : undefined} delay={0.18} />
+                      <TideRow label="Next" value={data.nextTide} delay={0.21} />
                       <Box>
                         <MotionFlex
-                          initial={{ opacity: 0, x: -10 }}
+                          initial={{ opacity: 0, x: -5 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.4, delay: 0.45 }}
+                          transition={{ duration: 0.2, delay: 0.24 }}
                           justify="space-between"
                           align="center"
                           py={3}
@@ -347,7 +347,7 @@ export default function Home() {
                     <MotionBox
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ duration: 0.4, delay: 0.5 }}
+                      transition={{ duration: 0.3, delay: 0.27 }}
                       textAlign="center"
                       pt={2}
                       pb={4}
