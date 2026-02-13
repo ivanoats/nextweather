@@ -247,6 +247,20 @@ NextWeather relies on publicly available NOAA data:
 - [**National Weather Service API**](https://www.weather.gov/documentation/services-web-api)
   — station observations and hourly forecasts
 
+## Documentation Agent Resources
+
+This repository includes comprehensive guides for creating GitHub Copilot documentation agents:
+
+- **[Documentation Agent Guide](DOCUMENTATION_AGENT_GUIDE.md)** — Complete tutorial on
+  writing documentation agents with examples and best practices
+- **[Quick Reference](DOCUMENTATION_AGENT_QUICKREF.md)** — Essential tips and patterns
+  for quick lookup
+- **[Template](DOCUMENTATION_AGENT_TEMPLATE.md)** — Ready-to-use template for creating
+  your own documentation agent
+
+These resources teach you how to create `.github/copilot-instructions.md` files that help
+GitHub Copilot better understand and assist with your projects.
+
 ## License
 
 This project is not currently licensed for public use or redistribution. All rights
