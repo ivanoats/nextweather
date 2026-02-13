@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, memo } from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
 
 export type TabId = 'conditions' | 'forecast' | 'about' | 'custom'
@@ -23,14 +23,6 @@ interface TabBarProps {
 
 /** Mobile-style bottom tab bar for navigation */
 export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
-  // Memoize click handler to prevent re-renders of child components
-  const handleTabClick = useCallback(
-    (tabId: TabId) => {
-      onTabChange(tabId)
-    },
-    [onTabChange]
-  )
-
   return (
     <Box
       as="nav"
@@ -53,7 +45,7 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
               key={tab.id}
               tab={tab}
               isActive={isActive}
-              onClick={handleTabClick}
+              onClick={onTabChange}
             />
           )
         })}
@@ -69,7 +61,7 @@ interface TabButtonProps {
   readonly onClick: (tabId: TabId) => void
 }
 
-function TabButton({ tab, isActive, onClick }: TabButtonProps) {
+const TabButton = memo(function TabButton({ tab, isActive, onClick }: TabButtonProps) {
   const handleClick = useCallback(() => {
     onClick(tab.id)
   }, [onClick, tab.id])
@@ -103,4 +95,4 @@ function TabButton({ tab, isActive, onClick }: TabButtonProps) {
       </Text>
     </Flex>
   )
-}
+})

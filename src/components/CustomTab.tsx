@@ -29,6 +29,7 @@ export default function CustomTab({
     }
   }, [])
 
+  // Memoize handleApply to maintain stable reference for button onClick
   const handleApply = useCallback(() => {
     if (!station.trim() || !tideStation.trim()) return
     onApply(station.trim(), tideStation.trim())
@@ -39,15 +40,6 @@ export default function CustomTab({
     }
     timeoutRef.current = setTimeout(() => setSaved(false), 2000)
   }, [station, tideStation, onApply])
-
-  // Memoize onChange handlers to prevent re-renders
-  const handleStationChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setStation(e.target.value)
-  }, [])
-
-  const handleTideStationChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setTideStation(e.target.value)
-  }, [])
 
   return (
     <MotionBox
@@ -71,7 +63,7 @@ export default function CustomTab({
               </Text>
               <Input
                 value={station}
-                onChange={handleStationChange}
+                onChange={(e) => setStation(e.target.value)}
                 placeholder="e.g. WPOW1"
                 size="md"
                 bg="gray.50"
@@ -93,7 +85,7 @@ export default function CustomTab({
               </Text>
               <Input
                 value={tideStation}
-                onChange={handleTideStationChange}
+                onChange={(e) => setTideStation(e.target.value)}
                 placeholder="e.g. 9447130"
                 size="md"
                 bg="gray.50"
