@@ -90,8 +90,9 @@ let observations: Observations = {};
 - **Testing**: Jest 30 with `next-test-api-route-handler` (uses `pagesHandler` config)
   for API endpoint testing
 - **Commit Standards**: Commitizen + commitlint for Conventional Commits
-- **Markdown Documentation**: Markdown generated should pass Markdownlint checks with
-  standard configuration
+- **Markdown Documentation**: Markdown files are linted with markdownlint-cli2. Run
+  `npm run lint:md` to check markdown formatting. Configuration is in
+  `.markdownlint.json` and includes standard rules with reasonable line length limits
 
 ## Development Workflows
 
@@ -107,6 +108,7 @@ npm run dev          # Next.js development server
 npm run build        # Production build
 npm run test         # Jest test suite
 npm run lint         # ESLint
+npm run lint:md      # Markdownlint
 npm run commit       # Commitizen interactive commit prompt
 npm run storybook    # Storybook 10 development server on http://localhost:6006
 npm run build-storybook  # Static Storybook export
