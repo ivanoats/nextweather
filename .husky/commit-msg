@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+husky_sh="$(dirname -- "$0")/_/husky.sh"
+if [ -f "$husky_sh" ]; then
+  . "$husky_sh"
+fi
 
 # Validate commit message format with commitlint
 npx --no -- commitlint --edit "$1"
