@@ -280,6 +280,51 @@ describe('generateForecastSummary', () => {
       ).toBe(true);
     });
 
+    it('should handle middle-ground wind differences between similar and significant', () => {
+      // Forecast slightly better than current (difference = +4 mph)
+      const slightlyBetterPeriods = [
+        createMockPeriod('21 mph', 60, 'Partly Cloudy'),
+        createMockPeriod('21 mph', 61, 'Partly Cloudy'),
+        createMockPeriod('21 mph', 60, 'Partly Cloudy'),
+        createMockPeriod('21 mph', 62, 'Partly Cloudy'),
+      ];
+
+      const currentSlightlyLower: CurrentConditions = {
+        windSpeed: 17, // 4 mph lower than ~21 mph forecast average
+        windGust: 20,
+        windDirection: 320,
+      };
+
+      const summarySlightlyBetter = generateForecastSummary(
+        slightlyBetterPeriods,
+        currentSlightlyLower
+      );
+
+      expect(typeof summarySlightlyBetter).toBe('string');
+      expect(summarySlightlyBetter.length).toBeGreaterThan(0);
+
+      // Forecast slightly worse than current (difference = -4 mph)
+      const slightlyWorsePeriods = [
+        createMockPeriod('13 mph', 60, 'Partly Cloudy'),
+        createMockPeriod('13 mph', 61, 'Partly Cloudy'),
+        createMockPeriod('13 mph', 60, 'Partly Cloudy'),
+        createMockPeriod('13 mph', 62, 'Partly Cloudy'),
+      ];
+
+      const currentSlightlyHigher: CurrentConditions = {
+        windSpeed: 17, // 4 mph higher than ~13 mph forecast average
+        windGust: 20,
+        windDirection: 320,
+      };
+
+      const summarySlightlyWorse = generateForecastSummary(
+        slightlyWorsePeriods,
+        currentSlightlyHigher
+      );
+
+      expect(typeof summarySlightlyWorse).toBe('string');
+      expect(summarySlightlyWorse.length).toBeGreaterThan(0);
+    });
     it('should be excited when forecast is better than current conditions', () => {
       const periods = [
         createMockPeriod('22 mph', 60, 'Partly Cloudy'),
