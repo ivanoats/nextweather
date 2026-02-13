@@ -1,4 +1,4 @@
-import { useCallback, memo } from 'react'
+import { memo } from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
 
 export type TabId = 'conditions' | 'forecast' | 'about' | 'custom'
@@ -62,10 +62,6 @@ interface TabButtonProps {
 }
 
 const TabButton = memo(function TabButton({ tab, isActive, onClick }: TabButtonProps) {
-  const handleClick = useCallback(() => {
-    onClick(tab.id)
-  }, [onClick, tab.id])
-
   return (
     <Flex
       as="button"
@@ -75,7 +71,7 @@ const TabButton = memo(function TabButton({ tab, isActive, onClick }: TabButtonP
       flex={1}
       h="100%"
       cursor="pointer"
-      onClick={handleClick}
+      onClick={() => onClick(tab.id)}
       role="tab"
       aria-selected={isActive}
       aria-label={tab.label}
