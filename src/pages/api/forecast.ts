@@ -67,10 +67,7 @@ const getStationCoordinates = async (
   return { lat, lon };
 };
 
-const getForecastUrl = async (
-  lat: number,
-  lon: number
-): Promise<string> => {
+const getForecastUrl = async (lat: number, lon: number): Promise<string> => {
   const { data } = await axios.get<NWSPointsResponse>(
     `https://api.weather.gov/points/${lat},${lon}`,
     { headers: { 'User-Agent': NWS_USER_AGENT } }
@@ -124,8 +121,9 @@ export default async function handler(
       longitude: lon,
       periods,
     });
-  } catch (error) {
-    errors.push(error);
+  } catch (err: any) {
+    const errorMessage = err?.message || 'Internal error';
+    errors.push(errorMessage);
     console.log(errors);
     res.status(500).json({ errors });
   }
