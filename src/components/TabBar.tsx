@@ -16,44 +16,6 @@ const tabs: TabItem[] = [
   { id: 'custom', label: 'Custom', icon: '⚙️' },
 ]
 
-interface TabBarProps {
-  readonly activeTab: TabId
-  readonly onTabChange: (tab: TabId) => void
-}
-
-/** Mobile-style bottom tab bar for navigation */
-export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
-  return (
-    <Box
-      as="nav"
-      aria-label="Main navigation"
-      position="fixed"
-      bottom={0}
-      left={0}
-      right={0}
-      bg="white"
-      borderTop="1px solid"
-      borderColor="gray.200"
-      pb="env(safe-area-inset-bottom)"
-      zIndex={10}
-    >
-      <Flex role="tablist" justify="space-around" align="center" h="56px" maxW="480px" mx="auto">
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.id
-          return (
-            <TabButton
-              key={tab.id}
-              tab={tab}
-              isActive={isActive}
-              onTabChange={onTabChange}
-            />
-          )
-        })}
-      </Flex>
-    </Box>
-  )
-}
-
 /**
  * Individual tab button component - memoized to prevent unnecessary re-renders
  * Uses useCallback to create stable click handler that won't break memoization
@@ -100,3 +62,41 @@ const TabButton = memo(function TabButton({ tab, isActive, onTabChange }: TabBut
     </Flex>
   )
 })
+
+interface TabBarProps {
+  readonly activeTab: TabId
+  readonly onTabChange: (tab: TabId) => void
+}
+
+/** Mobile-style bottom tab bar for navigation */
+export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
+  return (
+    <Box
+      as="nav"
+      aria-label="Main navigation"
+      position="fixed"
+      bottom={0}
+      left={0}
+      right={0}
+      bg="white"
+      borderTop="1px solid"
+      borderColor="gray.200"
+      pb="env(safe-area-inset-bottom)"
+      zIndex={10}
+    >
+      <Flex role="tablist" justify="space-around" align="center" h="56px" maxW="480px" mx="auto">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id
+          return (
+            <TabButton
+              key={tab.id}
+              tab={tab}
+              isActive={isActive}
+              onTabChange={onTabChange}
+            />
+          )
+        })}
+      </Flex>
+    </Box>
+  )
+}

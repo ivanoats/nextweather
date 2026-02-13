@@ -206,18 +206,18 @@ function getWeatherContext(weather: string, avgTemp: number): string {
 
   const contexts: Record<string, string[]> = {
     rainy: [
-      `Watch for rain showers.`,
-      `Bring your rain gear!`,
-      `Expect some wet conditions.`,
+      'Watch for rain showers.',
+      'Bring your rain gear!',
+      'Expect some wet conditions.',
     ],
     stormy: [
-      `Thunderstorms possible - stay safe!`,
-      `Storms in the forecast.`,
-      `Weather looking intense.`,
+      'Thunderstorms possible - stay safe!',
+      'Storms in the forecast.',
+      'Weather looking intense.',
     ],
     sunny: [
       `${tempDesc} and sunny!`,
-      `Beautiful clear skies!`,
+      'Beautiful clear skies!',
       `Perfect ${tempDesc} weather!`,
     ],
     cloudy: [
