@@ -8,12 +8,12 @@ import NWSDateToJSDate from '../../util/nws-date-to-js-date';
 // NDBC Realtime2 data format column indices
 // #YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP VIS PTDY  TIDE
 const NDBC_COLUMNS = {
-  WDIR: 5,   // Wind direction (degrees True)
-  WSPD: 6,   // Wind speed (m/s)
-  GST: 7,    // Wind gust (m/s)
-  ATMP: 13,  // Air temperature (°C)
+  WDIR: 5, // Wind direction (degrees True)
+  WSPD: 6, // Wind speed (m/s)
+  GST: 7, // Wind gust (m/s)
+  ATMP: 13, // Air temperature (°C)
 } as const;
-type Observations = {
+export type Observations = {
   stationId?: string;
   windSpeed?: number;
   windDirection?: number;
@@ -24,33 +24,33 @@ type Observations = {
   nextTideAfter?: string;
 };
 
-type Tide = {
+export type Tide = {
   metadata: TideMetadata;
   data: TideDataEntity[]; //| null;
-}
-type TideMetadata = {
+};
+export type TideMetadata = {
   id: string;
   name: string;
   lat: string;
   lon: string;
-}
-type TideDataEntity = {
+};
+export type TideDataEntity = {
   t: string;
   v: string;
   s: string;
   f: string;
   q: string;
-}
-type Predictions = {
+};
+export type Predictions = {
   predictions: PredictionsEntity[]; //| null;
-}
-type PredictionsEntity = {
+};
+export type PredictionsEntity = {
   t: string;
   v: string;
   type: string;
-}
+};
 
-type WeatherAPIerror = {
+export type WeatherAPIerror = {
   errors: unknown[];
 };
 
@@ -63,7 +63,9 @@ const parseNdbcObservations = (
   rawWeatherData: string
 ): Observations => {
   const lines = rawWeatherData.split('\n');
-  const dataLines = lines.filter(line => line.trim() && !line.startsWith('#'));
+  const dataLines = lines.filter(
+    (line) => line.trim() && !line.startsWith('#')
+  );
 
   if (dataLines.length === 0) {
     throw new Error('No data available from NDBC');

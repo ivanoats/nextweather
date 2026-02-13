@@ -47,3 +47,6 @@ buildlog.txt
 # Storybook static build output
 /storybook-static
 
+# TypeScript build info
+tsconfig.tsbuildinfo
+
