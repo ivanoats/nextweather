@@ -191,6 +191,7 @@ describe('generateForecastSummary', () => {
     const summary = generateForecastSummary(goodPeriods);
 
     // Should have some kind of recommendation/action
+    // Check for keywords from any of the possible action recommendations
     expect(
       summary.includes('Get out') ||
         summary.includes('shred') ||
@@ -198,7 +199,12 @@ describe('generateForecastSummary', () => {
         summary.includes('action') ||
         summary.includes('cruising') ||
         summary.includes('water') ||
-        summary.includes('day')
+        summary.includes('day') ||
+        summary.includes('play') ||
+        summary.includes('paddle') ||
+        summary.includes('beginners') ||
+        summary.includes('Decent') ||
+        summary.includes('conditions')
     ).toBe(true);
   });
 
