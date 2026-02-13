@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
 
 export type TabId = 'conditions' | 'forecast' | 'about' | 'custom'
@@ -45,7 +45,7 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
               key={tab.id}
               tab={tab}
               isActive={isActive}
-              onClick={onTabChange}
+              onTabChange={onTabChange}
             />
           )
         })}
@@ -54,14 +54,22 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
   )
 }
 
-/** Individual tab button component - memoized to prevent unnecessary re-renders */
+/**
+ * Individual tab button component - memoized to prevent unnecessary re-renders
+ * Uses useCallback to create stable click handler that won't break memoization
+ */
 interface TabButtonProps {
   readonly tab: TabItem
   readonly isActive: boolean
-  readonly onClick: (tabId: TabId) => void
+  readonly onTabChange: (tabId: TabId) => void
 }
 
-const TabButton = memo(function TabButton({ tab, isActive, onClick }: TabButtonProps) {
+const TabButton = memo(function TabButton({ tab, isActive, onTabChange }: TabButtonProps) {
+  // Create stable handler to maintain referential equality for React.memo
+  const handleClick = useCallback(() => {
+    onTabChange(tab.id)
+  }, [onTabChange, tab.id])
+
   return (
     <Flex
       as="button"
@@ -71,7 +79,7 @@ const TabButton = memo(function TabButton({ tab, isActive, onClick }: TabButtonP
       flex={1}
       h="100%"
       cursor="pointer"
-      onClick={() => onClick(tab.id)}
+      onClick={handleClick}
       role="tab"
       aria-selected={isActive}
       aria-label={tab.label}
