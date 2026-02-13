@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Box, Flex, Text, VStack, Input } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
@@ -29,7 +29,8 @@ export default function CustomTab({
     }
   }, [])
 
-  function handleApply() {
+  // Memoize handleApply to maintain stable reference for button onClick
+  const handleApply = useCallback(() => {
     if (!station.trim() || !tideStation.trim()) return
     onApply(station.trim(), tideStation.trim())
     setSaved(true)
@@ -38,7 +39,7 @@ export default function CustomTab({
       clearTimeout(timeoutRef.current)
     }
     timeoutRef.current = setTimeout(() => setSaved(false), 2000)
-  }
+  }, [station, tideStation, onApply])
 
   return (
     <MotionBox

@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
 
 export type TabId = 'conditions' | 'forecast' | 'about' | 'custom'
@@ -14,6 +15,53 @@ const tabs: TabItem[] = [
   { id: 'about', label: 'About', icon: 'ℹ️' },
   { id: 'custom', label: 'Custom', icon: '⚙️' },
 ]
+
+/**
+ * Individual tab button component - memoized to prevent unnecessary re-renders
+ * Uses useCallback to create stable click handler that won't break memoization
+ */
+interface TabButtonProps {
+  readonly tab: TabItem
+  readonly isActive: boolean
+  readonly onTabChange: (tabId: TabId) => void
+}
+
+const TabButton = memo(function TabButton({ tab, isActive, onTabChange }: TabButtonProps) {
+  // Create stable handler to maintain referential equality for React.memo
+  const handleClick = useCallback(() => {
+    onTabChange(tab.id)
+  }, [onTabChange, tab.id])
+
+  return (
+    <Flex
+      as="button"
+      direction="column"
+      align="center"
+      justify="center"
+      flex={1}
+      h="100%"
+      cursor="pointer"
+      onClick={handleClick}
+      role="tab"
+      aria-selected={isActive}
+      aria-label={tab.label}
+      _hover={{ bg: 'gray.50' }}
+      transition="background 0.15s"
+    >
+      <Text fontSize="lg" lineHeight="1" mb={0.5}>
+        {tab.icon}
+      </Text>
+      <Text
+        fontSize="2xs"
+        fontWeight={isActive ? '700' : '500'}
+        color={isActive ? 'blue.500' : 'gray.400'}
+        letterSpacing="wide"
+      >
+        {tab.label}
+      </Text>
+    </Flex>
+  )
+})
 
 interface TabBarProps {
   readonly activeTab: TabId
@@ -40,34 +88,12 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id
           return (
-            <Flex
+            <TabButton
               key={tab.id}
-              as="button"
-              direction="column"
-              align="center"
-              justify="center"
-              flex={1}
-              h="100%"
-              cursor="pointer"
-              onClick={() => onTabChange(tab.id)}
-              role="tab"
-              aria-selected={isActive}
-              aria-label={tab.label}
-              _hover={{ bg: 'gray.50' }}
-              transition="background 0.15s"
-            >
-              <Text fontSize="lg" lineHeight="1" mb={0.5}>
-                {tab.icon}
-              </Text>
-              <Text
-                fontSize="2xs"
-                fontWeight={isActive ? '700' : '500'}
-                color={isActive ? 'blue.500' : 'gray.400'}
-                letterSpacing="wide"
-              >
-                {tab.label}
-              </Text>
-            </Flex>
+              tab={tab}
+              isActive={isActive}
+              onTabChange={onTabChange}
+            />
           )
         })}
       </Flex>

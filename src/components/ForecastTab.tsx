@@ -1,51 +1,55 @@
-import { useEffect, useState, useCallback } from 'react'
-import { Box, Flex, Text, VStack, HStack, Spinner } from '@chakra-ui/react'
-import { motion } from 'framer-motion'
-import { AreaChart, Area, ResponsiveContainer, YAxis, Tooltip, XAxis } from 'recharts'
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { Box, Flex, Text, VStack, HStack, Spinner } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
+import {
+  AreaChart,
+  Area,
+  ResponsiveContainer,
+  YAxis,
+  Tooltip,
+  XAxis,
+} from 'recharts';
+import {
+  generateForecastSummary,
+  type ForecastPeriod,
+} from '../util/forecast-summary';
 
-const MotionBox = motion.create(Box)
-
-type ForecastPeriod = {
-  startTime: string
-  endTime: string
-  windSpeed: string
-  windDirection: string
-  shortForecast: string
-  temperature: number
-  temperatureUnit: string
-  isDaytime: boolean
-}
+const MotionBox = motion.create(Box);
 
 type ForecastData = {
-  stationId: string
-  latitude: number
-  longitude: number
-  periods: ForecastPeriod[]
-}
+  stationId: string;
+  latitude: number;
+  longitude: number;
+  periods: ForecastPeriod[];
+};
 
 interface ForecastTabProps {
-  readonly station?: string
+  readonly station?: string;
 }
 
 function formatHour(iso: string): string {
-  const date = new Date(iso)
-  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+  const date = new Date(iso);
+  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
 function formatDay(iso: string): string {
-  const date = new Date(iso)
-  return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
+  const date = new Date(iso);
+  return date.toLocaleDateString([], {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
 }
 
 function formatShortHour(iso: string): string {
-  const date = new Date(iso)
-  return date.toLocaleTimeString([], { hour: 'numeric' })
+  const date = new Date(iso);
+  return date.toLocaleTimeString([], { hour: 'numeric' });
 }
 
 /** Parse wind speed string like "10 mph" to a number */
 function parseWindSpeed(ws: string): number {
-  const windSpeedMatch = /(\d+)/.exec(ws)
-  return windSpeedMatch ? Number.parseInt(windSpeedMatch[1], 10) : 0
+  const windSpeedMatch = /(\d+)/.exec(ws);
+  return windSpeedMatch ? Number.parseInt(windSpeedMatch[1], 10) : 0;
 }
 
 /** Wind speed sparkline chart */
@@ -53,11 +57,13 @@ function WindSparkline({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
   const chartData = periods.map((p) => ({
     time: formatShortHour(p.startTime),
     wind: parseWindSpeed(p.windSpeed),
-    gust: p.windSpeed.includes('-') ? parseWindSpeed(p.windSpeed.split('-')[1]) : undefined,
-  }))
+    gust: p.windSpeed.includes('-')
+      ? parseWindSpeed(p.windSpeed.split('-')[1])
+      : undefined,
+  }));
 
-  const maxWind = Math.max(...chartData.map((d) => d.gust ?? d.wind))
-  const minWind = Math.min(...chartData.map((d) => d.wind))
+  const maxWind = Math.max(...chartData.map((d) => d.gust ?? d.wind));
+  const minWind = Math.min(...chartData.map((d) => d.wind));
 
   return (
     <Box
@@ -70,11 +76,21 @@ function WindSparkline({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
       role="img"
       aria-label={`Wind speed sparkline chart ranging from ${minWind} to ${maxWind} mph over the next 24 hours`}
     >
-      <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={2}>
+      <Text
+        fontSize="xs"
+        fontWeight="600"
+        color="gray.400"
+        textTransform="uppercase"
+        letterSpacing="wider"
+        mb={2}
+      >
         Wind Speed Trend
       </Text>
       <ResponsiveContainer width="100%" height={80}>
-        <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
+        <AreaChart
+          data={chartData}
+          margin={{ top: 4, right: 4, bottom: 0, left: 4 }}
+        >
           <defs>
             <linearGradient id="windGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.25} />
@@ -90,7 +106,11 @@ function WindSparkline({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
             interval={Math.max(0, Math.floor(chartData.length / 6) - 1)}
           />
           <Tooltip
-            contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }}
+            contentStyle={{
+              fontSize: 12,
+              borderRadius: 8,
+              border: '1px solid #e2e8f0',
+            }}
             formatter={(value?: number) => [`${value ?? 0} mph`, 'Wind']}
             labelFormatter={(label) => label ?? ''}
           />
@@ -106,18 +126,39 @@ function WindSparkline({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
         </AreaChart>
       </ResponsiveContainer>
     </Box>
-  )
+  );
 }
 
 function weatherIcon(forecast: string, isDaytime: boolean): string {
-  const lower = forecast.toLowerCase()
-  if (lower.includes('rain') || lower.includes('shower')) return '🌧️'
-  if (lower.includes('thunder') || lower.includes('storm')) return '⛈️'
-  if (lower.includes('snow')) return '🌨️'
-  if (lower.includes('fog') || lower.includes('mist')) return '🌫️'
-  if (lower.includes('cloud') || lower.includes('overcast')) return '☁️'
-  if (lower.includes('partly') || lower.includes('mostly')) return isDaytime ? '⛅' : '☁️'
-  return isDaytime ? '☀️' : '🌙'
+  const lower = forecast.toLowerCase();
+  if (lower.includes('rain') || lower.includes('shower')) return '🌧️';
+  if (lower.includes('thunder') || lower.includes('storm')) return '⛈️';
+  if (lower.includes('snow')) return '🌨️';
+  if (lower.includes('fog') || lower.includes('mist')) return '🌫️';
+  if (lower.includes('cloud') || lower.includes('overcast')) return '☁️';
+  if (lower.includes('partly') || lower.includes('mostly'))
+    return isDaytime ? '⛅' : '☁️';
+  return isDaytime ? '☀️' : '🌙';
+}
+
+/** Forecast summary card with natural language description */
+function ForecastSummary({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
+  const summary = useMemo(() => generateForecastSummary(periods), [periods]);
+
+  return (
+    <Box
+      bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      borderRadius="2xl"
+      boxShadow="0 4px 12px rgba(102, 126, 234, 0.3)"
+      px={5}
+      py={4}
+      mb={4}
+    >
+      <Text fontSize="md" fontWeight="600" color="white" lineHeight="1.6">
+        {summary}
+      </Text>
+    </Box>
+  );
 }
 
 /** Single forecast row */
@@ -125,7 +166,7 @@ function ForecastRow({
   period,
   delay = 0,
 }: Readonly<{ period: ForecastPeriod; delay?: number }>) {
-  const summary = `${formatHour(period.startTime)}: ${period.shortForecast}, wind ${period.windSpeed} ${period.windDirection}, ${period.temperature}°${period.temperatureUnit}`
+  const summary = `${formatHour(period.startTime)}: ${period.shortForecast}, wind ${period.windSpeed} ${period.windDirection}, ${period.temperature}°${period.temperatureUnit}`;
   return (
     <MotionBox
       as="li"
@@ -170,34 +211,34 @@ function ForecastRow({
         </HStack>
       </Flex>
     </MotionBox>
-  )
+  );
 }
 
 /** Forecast tab showing hourly wind forecast from NWS (HRRR-based) */
 export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
-  const [data, setData] = useState<ForecastData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [data, setData] = useState<ForecastData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchForecast = useCallback(async () => {
     try {
-      setError(null)
-      setLoading(true)
-      const params = new URLSearchParams({ station })
-      const res = await fetch(`/api/forecast?${params.toString()}`)
-      if (!res.ok) throw new Error(`Failed to fetch forecast (${res.status})`)
-      const json: ForecastData = await res.json()
-      setData(json)
+      setError(null);
+      setLoading(true);
+      const params = new URLSearchParams({ station });
+      const res = await fetch(`/api/forecast?${params.toString()}`);
+      if (!res.ok) throw new Error(`Failed to fetch forecast (${res.status})`);
+      const json: ForecastData = await res.json();
+      setData(json);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [station])
+  }, [station]);
 
   useEffect(() => {
-    fetchForecast()
-  }, [fetchForecast])
+    fetchForecast();
+  }, [fetchForecast]);
 
   return (
     <MotionBox
@@ -206,7 +247,13 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
       transition={{ duration: 0.2 }}
     >
       <VStack gap={4} align="stretch">
-        <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
+        <Box
+          bg="white"
+          borderRadius="2xl"
+          boxShadow="0 1px 3px rgba(0,0,0,0.08)"
+          px={6}
+          py={5}
+        >
           <Flex justify="space-between" align="center" mb={1}>
             <Text fontSize="xl" fontWeight="800" color="gray.800">
               Wind Forecast
@@ -221,21 +268,33 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
                 cursor="pointer"
                 aria-label="Refresh forecast"
                 _hover={{ color: 'blue.600' }}
-                _focusVisible={{ outline: '2px solid', outlineColor: 'blue.400', outlineOffset: '2px', borderRadius: 'md' }}
+                _focusVisible={{
+                  outline: '2px solid',
+                  outlineColor: 'blue.400',
+                  outlineOffset: '2px',
+                  borderRadius: 'md',
+                }}
               >
                 ↻
               </Text>
             )}
           </Flex>
           <Text fontSize="sm" color="gray.500" mb={4}>
-            24-hour hourly forecast from NWS{data ? ` · Station ${data.stationId}` : ''}
+            24-hour hourly forecast from NWS
+            {data ? ` · Station ${data.stationId}` : ''}
           </Text>
 
           {loading && (
             <Flex justify="center" align="center" minH="200px" role="status">
               <VStack gap={3}>
-                <Spinner size="lg" color="blue.400" aria-label="Loading forecast data" />
-                <Text fontSize="sm" color="gray.400">Fetching forecast…</Text>
+                <Spinner
+                  size="lg"
+                  color="blue.400"
+                  aria-label="Loading forecast data"
+                />
+                <Text fontSize="sm" color="gray.400">
+                  Fetching forecast…
+                </Text>
               </VStack>
             </Flex>
           )}
@@ -243,8 +302,17 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
           {error && !loading && (
             <Flex justify="center" align="center" minH="200px" role="alert">
               <VStack gap={3}>
-                <Text fontSize="lg" color="red.400" fontWeight="600" aria-hidden="true">⚠</Text>
-                <Text fontSize="sm" color="gray.500" textAlign="center">{error}</Text>
+                <Text
+                  fontSize="lg"
+                  color="red.400"
+                  fontWeight="600"
+                  aria-hidden="true"
+                >
+                  ⚠
+                </Text>
+                <Text fontSize="sm" color="gray.500" textAlign="center">
+                  {error}
+                </Text>
                 <Text
                   as="button"
                   fontSize="sm"
@@ -252,7 +320,12 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
                   color="blue.500"
                   onClick={fetchForecast}
                   cursor="pointer"
-                  _focusVisible={{ outline: '2px solid', outlineColor: 'blue.400', outlineOffset: '2px', borderRadius: 'md' }}
+                  _focusVisible={{
+                    outline: '2px solid',
+                    outlineColor: 'blue.400',
+                    outlineOffset: '2px',
+                    borderRadius: 'md',
+                  }}
                 >
                   Try again
                 </Text>
@@ -262,16 +335,36 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
 
           {data && !loading && (
             <>
+              <ForecastSummary periods={data.periods} />
               <WindSparkline periods={data.periods} />
               {/* Group by day */}
               {groupByDay(data.periods).map(([day, periods]) => (
                 <Box key={day} mb={4}>
-                  <Text as="h3" fontSize="xs" fontWeight="700" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={1}>
+                  <Text
+                    as="h3"
+                    fontSize="xs"
+                    fontWeight="700"
+                    color="gray.400"
+                    textTransform="uppercase"
+                    letterSpacing="wider"
+                    mb={1}
+                  >
                     {day}
                   </Text>
-                  <Box as="ul" role="list" aria-label={`Forecast for ${day}`} listStyleType="none" m={0} p={0}>
+                  <Box
+                    as="ul"
+                    role="list"
+                    aria-label={`Forecast for ${day}`}
+                    listStyleType="none"
+                    m={0}
+                    p={0}
+                  >
                     {periods.map((period, i) => (
-                      <ForecastRow key={period.startTime} period={period} delay={i * 0.01} />
+                      <ForecastRow
+                        key={period.startTime}
+                        period={period}
+                        delay={i * 0.01}
+                      />
                     ))}
                   </Box>
                 </Box>
@@ -281,20 +374,20 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
         </Box>
       </VStack>
     </MotionBox>
-  )
+  );
 }
 
 /** Group forecast periods by day label */
 function groupByDay(periods: ForecastPeriod[]): [string, ForecastPeriod[]][] {
-  const groups: Map<string, ForecastPeriod[]> = new Map()
+  const groups: Map<string, ForecastPeriod[]> = new Map();
   for (const period of periods) {
-    const day = formatDay(period.startTime)
-    const existing = groups.get(day)
+    const day = formatDay(period.startTime);
+    const existing = groups.get(day);
     if (existing) {
-      existing.push(period)
+      existing.push(period);
     } else {
-      groups.set(day, [period])
+      groups.set(day, [period]);
     }
   }
-  return Array.from(groups.entries())
+  return Array.from(groups.entries());
 }
