@@ -16,6 +16,7 @@
  */
 
 // Wind speed thresholds (mph)
+const WIND_THRESHOLD_LOW = 10;
 const WIND_THRESHOLD_MODERATE = 12;
 const WIND_THRESHOLD_HIGH = 15;
 const WIND_THRESHOLD_EPIC = 20;
@@ -179,7 +180,7 @@ function getWindDescription(conditions: WindCondition): string {
     windVerb = 'howling';
   } else if (avgSpeed > WIND_THRESHOLD_HIGH) {
     windVerb = 'cranking';
-  } else if (avgSpeed > WIND_THRESHOLD_MODERATE - 2) {
+  } else if (avgSpeed > WIND_THRESHOLD_LOW) {
     windVerb = 'blowing';
   }
 
