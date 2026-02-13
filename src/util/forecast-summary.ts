@@ -120,7 +120,7 @@ function compareForecastWithCurrent(
   forecastConditions: WindCondition,
   currentConditions?: CurrentConditions
 ): ForecastComparison | null {
-  if (!currentConditions?.windSpeed) {
+  if (currentConditions?.windSpeed == null) {
     return null;
   }
 
