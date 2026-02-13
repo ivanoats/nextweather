@@ -236,6 +236,7 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
     try {
       setError(null);
       setLoading(true);
+      setCurrentConditions(null); // Reset to avoid stale data
 
       // Fetch both forecast and current conditions in parallel
       const [forecastRes, currentRes] = await Promise.allSettled([
