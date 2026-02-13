@@ -247,9 +247,13 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
       if (forecastRes.status === 'fulfilled' && forecastRes.value.ok) {
         const json: ForecastData = await forecastRes.value.json();
         setData(json);
+      } else if (forecastRes.status === 'fulfilled') {
+        throw new Error(
+          `Failed to fetch forecast (${forecastRes.value.status})`
+        );
       } else {
         throw new Error(
-          `Failed to fetch forecast (${forecastRes.status === 'fulfilled' ? forecastRes.value.status : 'rejected'})`
+          `Failed to fetch forecast: ${forecastRes.reason?.message || 'Network error'}`
         );
       }
 

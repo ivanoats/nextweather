@@ -57,8 +57,8 @@ type WindCondition = {
 };
 
 type ForecastComparison = {
-  isCurrentlyBetter: boolean; // current wind > forecast average
-  isCurrentlyWorse: boolean; // current wind < forecast average by significant margin
+  isCurrentStronger: boolean; // current wind > forecast average
+  isForecastStronger: boolean; // forecast wind > current average by significant margin
   isSimilar: boolean; // current wind ~ forecast average
   currentSpeed: number;
   forecastAvg: number;
@@ -130,15 +130,15 @@ function compareForecastWithCurrent(
 
   // Define thresholds for comparison
   const SIMILAR_THRESHOLD = 3; // Within 3 mph is considered similar
-  const BETTER_THRESHOLD = 5; // Current must be 5+ mph higher to be "better"
+  const SIGNIFICANT_DIFFERENCE = 5; // 5+ mph difference is significant
 
-  const isCurrentlyBetter = difference < -BETTER_THRESHOLD; // forecast < current by 5+ mph
-  const isCurrentlyWorse = difference > BETTER_THRESHOLD; // forecast > current by 5+ mph
+  const isCurrentStronger = difference < -SIGNIFICANT_DIFFERENCE; // forecast < current by 5+ mph
+  const isForecastStronger = difference > SIGNIFICANT_DIFFERENCE; // forecast > current by 5+ mph
   const isSimilar = Math.abs(difference) <= SIMILAR_THRESHOLD;
 
   return {
-    isCurrentlyBetter,
-    isCurrentlyWorse,
+    isCurrentStronger,
+    isForecastStronger,
     isSimilar,
     currentSpeed,
     forecastAvg,
@@ -177,8 +177,8 @@ function getExcitedOpening(
 ): string {
   const { avgSpeed, sustainedHighWind } = conditions;
 
-  // If current conditions are already better than forecast, tone it down
-  if (comparison?.isCurrentlyBetter) {
+  // If current conditions are already stronger than forecast, tone it down
+  if (comparison?.isCurrentStronger) {
     if (avgSpeed > WIND_THRESHOLD_HIGH) {
       return pickRandom([
         '💨 Still looking solid ahead!',
