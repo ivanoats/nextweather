@@ -144,7 +144,7 @@ Contributions are welcome! Please follow these steps:
 
 ### Commit Convention
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by commitlint and [Conventional-Branch](https://conventional-branch.github.io/) for branch naming. Use the `npm run commit` helper for a guided prompt, or write messages like:
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by commitlint. Branch naming is encouraged to follow the [Conventional-Branch](https://conventional-branch.github.io/) pattern as a recommendation (not currently CI-enforced). Use the `npm run commit` helper for a guided prompt, or write messages like:
 
 ```text
 feat: add support for wave height data
