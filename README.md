@@ -13,6 +13,7 @@ NextWeather aggregates data from multiple NOAA APIs into a single, glanceable in
 - **Hourly forecast** — wind and weather forecast from the National Weather Service
 - **Customizable stations** — query any NDBC or NWS station by ID
 - **Responsive UI** — Chakra UI v3 with animated transitions via Framer Motion
+- **Comprehensive TypeScript types** — Fully typed API responses with exported types for external consumers
 
 ## Architecture
 
@@ -57,6 +58,31 @@ graph LR
 | `/api/forecast?station=KSEA` | NWS | Hourly wind & weather forecast for a station |
 | `/api/observations?station=KSEA` | NWS | Latest weather observations for a station |
 
+#### API Implementation Details
+
+The `/api/nbdc` endpoint uses `Promise.allSettled` for parallel data fetching:
+
+- Fetches NDBC weather data, current tide, and tide predictions concurrently
+- Accumulates errors without failing completely (partial data availability)
+- Uses helper functions: `parseNdbcObservations()`, `parseValue()`, `fetchWeatherData()`, `getCurrentTide()`, `getNextTides()`
+
+NDBC data parsing uses column index constants for the realtime2 space-delimited format:
+
+```typescript
+const NDBC_COLUMNS = {
+  WDIR: 5,   // Wind direction (degrees True)
+  WSPD: 6,   // Wind speed (m/s)
+  GST: 7,    // Wind gust (m/s)
+  ATMP: 13,  // Air temperature (°C)
+} as const;
+```
+
+NWS API requests include a required User-Agent header:
+
+```typescript
+const NWS_USER_AGENT = 'NextWeather/1.0 (westpointwind.com)';
+```
+
 ### Tech Stack
 
 | Layer | Technology |
@@ -68,7 +94,7 @@ graph LR
 | Testing | Jest 30, React Testing Library, `next-test-api-route-handler` |
 | Component Dev | Storybook 10 |
 | Deployment | Netlify |
-| Commit Standards | Commitizen + commitlint (Conventional Commits) |
+| Commit Standards | Commitizen + commitlint (Conventional Commits + Conventional Branch) |
 
 ## Getting Started
 
@@ -118,7 +144,7 @@ Contributions are welcome! Please follow these steps:
 
 ### Commit Convention
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by commitlint. Use the `npm run commit` helper for a guided prompt, or write messages like:
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by commitlint and [Conventional-Branch](https://conventional-branch.github.io/) for branch naming. Use the `npm run commit` helper for a guided prompt, or write messages like:
 
 ```text
 feat: add support for wave height data
@@ -139,6 +165,68 @@ docs: update API endpoint table in README
 - Utility functions in `src/util/`
 - Tests in `tests/` mirroring the source tree
 - Storybook stories in `stories/`
+
+## API Types
+
+NextWeather provides comprehensive TypeScript types for all API responses:
+
+### `/api/nbdc` Response Types
+
+```typescript
+type Observations = {
+  stationId?: string;
+  windSpeed?: number;     // Converted to MPH
+  windDirection?: number; // Degrees
+  windGust?: number;      // Converted to MPH  
+  airTemp?: number;       // Converted to Fahrenheit
+  currentTide?: string;   // Current level
+  nextTide?: string;      // Next tide prediction
+  nextTideAfter?: string; // Following tide prediction
+};
+```
+
+### `/api/forecast` Response Types (Exported)
+
+```typescript
+export type ForecastPeriod = {
+  startTime: string;
+  endTime: string;
+  windSpeed: string;
+  windDirection: string;
+  shortForecast: string;
+  temperature: number;
+  temperatureUnit: string;
+  isDaytime: boolean;
+};
+
+export type ForecastResponse = {
+  stationId: string;
+  latitude: number;
+  longitude: number;
+  periods: ForecastPeriod[];
+};
+```
+
+### `/api/observations` Response Types (GeoJSON-LD)
+
+```typescript
+interface WeatherValue {
+  unitCode: string;
+  value: number | null;
+  qualityControl: string;
+}
+
+interface ObservationProperties {
+  station: string;
+  timestamp: string;
+  temperature: WeatherValue;
+  dewpoint: WeatherValue;
+  windDirection: WeatherValue;
+  windSpeed: WeatherValue;
+  windGust: WeatherValue;
+  // ... additional optional properties
+}
+```
 
 ## Data Sources
 
