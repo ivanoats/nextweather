@@ -34,6 +34,11 @@ type WindCondition = {
   gusty: boolean;
 };
 
+/** Helper to pick random item from array */
+function pickRandom<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 /** Parse wind speed string like "10 mph" or "10-15 mph" to get average and max */
 function parseWindSpeed(ws: string): { avg: number; max: number } {
   const numbers = ws.match(/(\d+)(?:-(\d+))?/);
@@ -108,46 +113,46 @@ function getExcitedOpening(conditions: WindCondition): string {
   const { avgSpeed, sustainedHighWind } = conditions;
 
   if (sustainedHighWind && avgSpeed > 20) {
-    return [
+    return pickRandom([
       '🔥 EPIC wind day ahead!',
       '⚡ OH YEAH! Major wind incoming!',
       '🌊 GET PUMPED! Gonna be MASSIVE!',
       '💨 WHOA! This is gonna be WILD!',
-    ][Math.floor(Math.random() * 4)];
+    ]);
   }
 
   if (sustainedHighWind && avgSpeed > 15) {
-    return [
+    return pickRandom([
       '🎉 Sweet! Solid wind all day!',
       '🚀 Nice! Gonna be some sick waves out there today!',
       '⛵ Perfect! Sustained wind coming through!',
       '🏄 Excellent! Great conditions ahead!',
-    ][Math.floor(Math.random() * 4)];
+    ]);
   }
 
   if (sustainedHighWind && avgSpeed > 12) {
-    return [
+    return pickRandom([
       '👍 Looking good! Consistent wind today!',
       '✨ Decent! Should be fun out there!',
       '🌊 Not bad! Steady breeze coming in!',
       '⛵ Promising! Nice sailing conditions!',
-    ][Math.floor(Math.random() * 4)];
+    ]);
   }
 
   if (avgSpeed > 12) {
-    return [
+    return pickRandom([
       '👌 Some nice puffs expected!',
       '🌬️ Wind picking up at times!',
       '⛵ Moderate conditions ahead!',
-    ][Math.floor(Math.random() * 3)];
+    ]);
   }
 
   // Light wind
-  return [
+  return pickRandom([
     '😌 Light and easy today.',
     '🍃 Gentle breeze ahead.',
     '🛶 Mellow conditions expected.',
-  ][Math.floor(Math.random() * 3)];
+  ]);
 }
 
 /** Generate wind description */
@@ -210,7 +215,7 @@ function getWeatherContext(weather: string, avgTemp: number): string {
   };
 
   const options = contexts[weather] || contexts.mixed;
-  return options[Math.floor(Math.random() * options.length)];
+  return pickRandom(options);
 }
 
 /** Generate action recommendation based on conditions */
@@ -225,27 +230,27 @@ function getActionRecommendation(
   }
 
   if (sustainedHighWind && avgSpeed > 15) {
-    return [
+    return pickRandom([
       'Get out there! 🎯',
       'Time to shred! 🤙',
       'Perfect day to get on the water! 💦',
       "Don't miss this! 🔥",
-    ][Math.floor(Math.random() * 4)];
+    ]);
   }
 
   if (avgSpeed > 12) {
-    return [
+    return pickRandom([
       'Should be a fun session! 🌊',
       'Good day for some action! ⛵',
       'Decent conditions to play in! 🏄',
-    ][Math.floor(Math.random() * 3)];
+    ]);
   }
 
-  return [
+  return pickRandom([
     'Good for cruising. 🛶',
     'Nice for a relaxed paddle. 🚣',
     'Perfect for beginners! 👍',
-  ][Math.floor(Math.random() * 3)];
+  ]);
 }
 
 /**
