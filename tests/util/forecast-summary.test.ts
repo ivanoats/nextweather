@@ -49,7 +49,7 @@ describe('generateForecastSummary', () => {
     expect(summary.toLowerCase()).toContain('wind');
 
     // Should be enthusiastic (contains emoji or exclamation)
-    expect(/[🎉🚀⛵🏄🌊!]/.test(summary)).toBe(true);
+    expect(/🎉|🚀|⛵|🏄|🌊|!/.test(summary)).toBe(true);
   });
 
   it('should generate epic message for very high sustained wind', () => {
@@ -70,7 +70,7 @@ describe('generateForecastSummary', () => {
         summary.includes('WILD') ||
         summary.includes('WHOA') ||
         summary.includes('PUMPED') ||
-        /[🔥⚡💨]/.test(summary)
+        /🔥|⚡|💨/.test(summary)
     ).toBe(true);
   });
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Box, Flex, Text, VStack, HStack, Spinner } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
@@ -151,7 +151,7 @@ function weatherIcon(forecast: string, isDaytime: boolean): string {
 
 /** Forecast summary card with natural language description */
 function ForecastSummary({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
-  const summary = generateForecastSummary(periods);
+  const summary = useMemo(() => generateForecastSummary(periods), [periods]);
 
   return (
     <Box
