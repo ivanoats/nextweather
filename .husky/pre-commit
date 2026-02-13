@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged (linting and formatting on staged files)
+npm run lint-staged || exit 1
+
+# Run TypeScript type checking
+echo "Running TypeScript type check..."
+npm run type-check || exit 1
+
+echo "✅ Pre-commit checks passed!"
