@@ -3,7 +3,11 @@
     "eslint --fix",
     "prettier --write"
   ],
-  "*.{json,md,css}": [
+  "*.{json,css}": [
+    "prettier --write"
+  ],
+  "*.md": [
+    "markdownlint-cli2 --fix",
     "prettier --write"
   ]
 }

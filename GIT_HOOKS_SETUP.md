@@ -1,32 +1,44 @@
 # Git Hooks Setup
 
-This document explains the pre-commit hooks and recommended tools configured for this project.
+This document explains the pre-commit hooks and recommended tools configured for this
+project.
 
 ## Installed Tools
 
 ### 1. **Husky** - Git Hooks Manager
-Husky makes managing Git hooks easy. It runs scripts before commits, pushes, and other Git operations.
+
+Husky makes managing Git hooks easy. It runs scripts before commits, pushes, and other
+Git operations.
 
 ### 2. **lint-staged** - Run Linters on Staged Files
-Instead of linting all files, lint-staged only runs linters on files you've staged for commit, making checks much faster.
+
+Instead of linting all files, lint-staged only runs linters on files you've staged for
+commit, making checks much faster.
 
 ### 3. **Commitlint** - Enforce Commit Message Conventions
+
 Validates that your commit messages follow the Conventional Commits standard.
 
 ## Configured Hooks
 
 ### Pre-commit Hook (`.husky/pre-commit`)
+
 Runs **before** every commit:
+
 - ✅ **ESLint** - Fixes and lints staged JavaScript/TypeScript files
 - ✅ **Prettier** - Formats staged files
 - ✅ **Type Check** - Runs TypeScript compiler to catch type errors
 
 ### Commit-msg Hook (`.husky/commit-msg`)
+
 Runs **after** you write your commit message:
+
 - ✅ **Commitlint** - Validates commit message format
 
 ### Pre-push Hook (`.husky/pre-push`)
+
 Runs **before** pushing to remote:
+
 - ✅ **Tests** - Runs the entire test suite
 - ✅ **Build** - Ensures production build succeeds
 
@@ -101,9 +113,11 @@ The `.lintstagedrc.json` file defines what runs on staged files:
 ## Additional Recommended Tools
 
 ### 1. **EditorConfig**
+
 Helps maintain consistent coding styles across different editors.
 
 Create `.editorconfig` file:
+
 ```ini
 root = true
 
@@ -122,11 +136,13 @@ trim_trailing_whitespace = false
 ### 2. **Dependency Management**
 
 - **npm-check-updates** - Keep dependencies up to date
+
   ```bash
   npx npm-check-updates -u
   ```
 
 - **depcheck** - Find unused dependencies
+
   ```bash
   npx depcheck
   ```
@@ -139,6 +155,7 @@ trim_trailing_whitespace = false
 ### 4. **CI/CD Enhancements**
 
 Consider adding to your CI pipeline:
+
 - **Lighthouse CI** - Performance budgets
 - **Bundle analyzer** - Track bundle size
 - **Percy** or **Chromatic** - Visual regression testing for Storybook
@@ -146,6 +163,7 @@ Consider adding to your CI pipeline:
 ### 5. **Documentation**
 
 - **TypeDoc** - Generate TypeScript documentation
+
   ```bash
   npm install --save-dev typedoc
   ```
@@ -153,6 +171,7 @@ Consider adding to your CI pipeline:
 ### 6. **Security**
 
 - **npm audit** - Already available, run with:
+
   ```bash
   npm audit
   npm audit fix
@@ -182,12 +201,14 @@ Modify `.lintstagedrc.json` to change what runs on staged files.
 
 ### Hooks Not Running
 
-1. Ensure husky is installed:
+1. **Ensure husky is installed:**
+
    ```bash
    npm install
    ```
 
-2. Check hook permissions:
+2. **Check hook permissions:**
+
    ```bash
    chmod +x .husky/pre-commit .husky/commit-msg .husky/pre-push
    ```
@@ -205,6 +226,7 @@ Only do this temporarily! Type checking catches important errors.
 ### CI/CD Conflicts
 
 Make sure your CI pipeline runs the same checks:
+
 - `npm run lint`
 - `npm run type-check`
 - `npm run test`
@@ -216,7 +238,7 @@ This ensures code that passes locally will pass in CI.
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>
@@ -225,6 +247,7 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -238,7 +261,8 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/):
 - `revert`: Reverting changes
 
 **Examples:**
-```
+
+```text
 feat(api): add tide prediction endpoint
 fix(forecast): handle missing wind data
 docs: update API documentation

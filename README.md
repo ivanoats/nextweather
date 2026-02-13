@@ -2,9 +2,12 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ca0b1324-b434-41fb-8c62-1d13c0d36668/deploy-status)](https://app.netlify.com/sites/nextweather/deploys)
 
-> Real-time wind and tide conditions for human-powered watercraft — kayakers, sailors, and paddleboarders.
+> Real-time wind and tide conditions for human-powered watercraft — kayakers,
+> sailors, and paddleboarders.
 
-NextWeather aggregates data from multiple NOAA APIs into a single, glanceable interface so you can check conditions before heading out on the water. Data refreshes automatically every 5 minutes.
+NextWeather aggregates data from multiple NOAA APIs into a single, glanceable
+interface so you can check conditions before heading out on the water. Data
+refreshes automatically every 5 minutes.
 
 ## Features
 
@@ -139,12 +142,17 @@ Contributions are welcome! Please follow these steps:
 3. **Make your changes** — write TypeScript for any new files.
 4. **Add tests** — place them in `tests/` mirroring the source structure.
 5. **Run the test suite** — `npm test` to make sure nothing is broken.
-6. **Commit using Conventional Commits** — run `npm run commit` to use Commitizen, or format manually (e.g. `feat: add new station`, `fix: tide parsing`).
+6. **Commit using Conventional Commits** — run `npm run commit` to use Commitizen, or
+   format manually (e.g. `feat: add new station`, `fix: tide parsing`).
 7. **Open a Pull Request** against `main`.
 
 ### Commit Convention
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by commitlint. Branch naming is encouraged to follow the [Conventional-Branch](https://conventional-branch.github.io/) pattern as a recommendation (not currently CI-enforced). Use the `npm run commit` helper for a guided prompt, or write messages like:
+This project uses [Conventional Commits](https://www.conventionalcommits.org/)
+enforced by commitlint. Branch naming is encouraged to follow the
+[Conventional-Branch](https://conventional-branch.github.io/) pattern as a
+recommendation (not currently CI-enforced). Use the `npm run commit` helper for
+a guided prompt, or write messages like:
 
 ```text
 feat: add support for wave height data
@@ -232,13 +240,18 @@ interface ObservationProperties {
 
 NextWeather relies on publicly available NOAA data:
 
-- [**NDBC (National Data Buoy Center)**](https://www.ndbc.noaa.gov/) — realtime2 text files with 45-day wind/wave/temperature history
-- [**NOAA Tides & Currents**](https://tidesandcurrents.noaa.gov/) — water level observations and tide predictions
-- [**National Weather Service API**](https://www.weather.gov/documentation/services-web-api) — station observations and hourly forecasts
+- [**NDBC (National Data Buoy Center)**](https://www.ndbc.noaa.gov/) — realtime2 text
+  files with 45-day wind/wave/temperature history
+- [**NOAA Tides & Currents**](https://tidesandcurrents.noaa.gov/) — water level
+  observations and tide predictions
+- [**National Weather Service API**](https://www.weather.gov/documentation/services-web-api)
+  — station observations and hourly forecasts
 
 ## License
 
-This project is not currently licensed for public use or redistribution. All rights reserved © 2026 Ivan Storck. If you are interested in using this code, please contact the author to discuss licensing terms.
+This project is not currently licensed for public use or redistribution. All rights
+reserved © 2026 Ivan Storck. If you are interested in using this code, please
+contact the author to discuss licensing terms.
 
 ---
 
