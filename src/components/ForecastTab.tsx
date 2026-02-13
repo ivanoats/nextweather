@@ -9,20 +9,12 @@ import {
   Tooltip,
   XAxis,
 } from 'recharts';
-import { generateForecastSummary } from '../util/forecast-summary';
+import {
+  generateForecastSummary,
+  type ForecastPeriod,
+} from '../util/forecast-summary';
 
 const MotionBox = motion.create(Box);
-
-type ForecastPeriod = {
-  startTime: string;
-  endTime: string;
-  windSpeed: string;
-  windDirection: string;
-  shortForecast: string;
-  temperature: number;
-  temperatureUnit: string;
-  isDaytime: boolean;
-};
 
 type ForecastData = {
   stationId: string;

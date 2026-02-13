@@ -15,6 +15,21 @@
  * - Local models (Ollama): Free but requires setup/hosting
  */
 
+// Wind speed thresholds (mph)
+const WIND_THRESHOLD_MODERATE = 12;
+const WIND_THRESHOLD_HIGH = 15;
+const WIND_THRESHOLD_EPIC = 20;
+
+// Wind analysis thresholds
+const MIN_CONSECUTIVE_PERIODS_SUSTAINED = 3;
+const GUST_RANGE_THRESHOLD = 5;
+const WIND_SPEED_VARIANCE_THRESHOLD = 10;
+
+// Temperature thresholds (Fahrenheit)
+const TEMP_WARM = 75;
+const TEMP_COMFORTABLE = 60;
+const TEMP_COOL = 45;
+
 export type ForecastPeriod = {
   startTime: string;
   endTime: string;
@@ -63,21 +78,21 @@ function analyzeWindConditions(periods: ForecastPeriod[]): WindCondition {
   const maxSpeed = Math.max(...maxSpeeds);
   const minSpeed = Math.min(...avgSpeeds);
 
-  // Check for sustained high wind (3+ consecutive periods over 12mph)
+  // Check for sustained high wind (3+ consecutive periods over threshold)
   let consecutiveHighWind = 0;
   let maxConsecutive = 0;
   for (const speed of avgSpeeds) {
-    if (speed > 12) {
+    if (speed > WIND_THRESHOLD_MODERATE) {
       consecutiveHighWind++;
       maxConsecutive = Math.max(maxConsecutive, consecutiveHighWind);
     } else {
       consecutiveHighWind = 0;
     }
   }
-  const sustainedHighWind = maxConsecutive >= 3;
+  const sustainedHighWind = maxConsecutive >= MIN_CONSECUTIVE_PERIODS_SUSTAINED;
 
-  // Gusty if many periods have range differences > 5mph
-  const gustyPeriods = speeds.filter((s) => s.max - s.avg > 5).length;
+  // Gusty if many periods have range differences > threshold
+  const gustyPeriods = speeds.filter((s) => s.max - s.avg > GUST_RANGE_THRESHOLD).length;
   const gusty = gustyPeriods > periods.length / 3;
 
   return { avgSpeed, maxSpeed, minSpeed, sustainedHighWind, gusty };
@@ -112,7 +127,7 @@ function getDominantWeather(periods: ForecastPeriod[]): string {
 function getExcitedOpening(conditions: WindCondition): string {
   const { avgSpeed, sustainedHighWind } = conditions;
 
-  if (sustainedHighWind && avgSpeed > 20) {
+  if (sustainedHighWind && avgSpeed > WIND_THRESHOLD_EPIC) {
     return pickRandom([
       '🔥 EPIC wind day ahead!',
       '⚡ OH YEAH! Major wind incoming!',
@@ -121,7 +136,7 @@ function getExcitedOpening(conditions: WindCondition): string {
     ]);
   }
 
-  if (sustainedHighWind && avgSpeed > 15) {
+  if (sustainedHighWind && avgSpeed > WIND_THRESHOLD_HIGH) {
     return pickRandom([
       '🎉 Sweet! Solid wind all day!',
       '🚀 Nice! Gonna be some sick waves out there today!',
@@ -130,7 +145,7 @@ function getExcitedOpening(conditions: WindCondition): string {
     ]);
   }
 
-  if (sustainedHighWind && avgSpeed > 12) {
+  if (sustainedHighWind && avgSpeed > WIND_THRESHOLD_MODERATE) {
     return pickRandom([
       '👍 Looking good! Consistent wind today!',
       '✨ Decent! Should be fun out there!',
@@ -139,7 +154,7 @@ function getExcitedOpening(conditions: WindCondition): string {
     ]);
   }
 
-  if (avgSpeed > 12) {
+  if (avgSpeed > WIND_THRESHOLD_MODERATE) {
     return pickRandom([
       '👌 Some nice puffs expected!',
       '🌬️ Wind picking up at times!',
@@ -159,17 +174,18 @@ function getExcitedOpening(conditions: WindCondition): string {
 function getWindDescription(conditions: WindCondition): string {
   const { avgSpeed, maxSpeed, minSpeed, gusty } = conditions;
 
-  const windVerb =
-    avgSpeed > 20
-      ? 'howling'
-      : avgSpeed > 15
-        ? 'cranking'
-        : avgSpeed > 10
-          ? 'blowing'
-          : 'drifting';
+  let windVerb = 'drifting';
+  if (avgSpeed > WIND_THRESHOLD_EPIC) {
+    windVerb = 'howling';
+  } else if (avgSpeed > WIND_THRESHOLD_HIGH) {
+    windVerb = 'cranking';
+  } else if (avgSpeed > WIND_THRESHOLD_MODERATE - 2) {
+    windVerb = 'blowing';
+  }
+
   const gustDesc = gusty ? ' with some gnarly gusts' : '';
 
-  if (maxSpeed - minSpeed > 10) {
+  if (maxSpeed - minSpeed > WIND_SPEED_VARIANCE_THRESHOLD) {
     return `Wind ${windVerb} ${Math.round(minSpeed)}-${Math.round(maxSpeed)}mph${gustDesc}.`;
   }
 
@@ -178,14 +194,14 @@ function getWindDescription(conditions: WindCondition): string {
 
 /** Generate weather context */
 function getWeatherContext(weather: string, avgTemp: number): string {
-  const tempDesc =
-    avgTemp > 75
-      ? 'warm'
-      : avgTemp > 60
-        ? 'comfortable'
-        : avgTemp > 45
-          ? 'cool'
-          : 'chilly';
+  let tempDesc = 'chilly';
+  if (avgTemp > TEMP_WARM) {
+    tempDesc = 'warm';
+  } else if (avgTemp > TEMP_COMFORTABLE) {
+    tempDesc = 'comfortable';
+  } else if (avgTemp > TEMP_COOL) {
+    tempDesc = 'cool';
+  }
 
   const contexts: Record<string, string[]> = {
     rainy: [
@@ -229,7 +245,7 @@ function getActionRecommendation(
     return '⚠️ Check conditions before heading out.';
   }
 
-  if (sustainedHighWind && avgSpeed > 15) {
+  if (sustainedHighWind && avgSpeed > WIND_THRESHOLD_HIGH) {
     return pickRandom([
       'Get out there! 🎯',
       'Time to shred! 🤙',
@@ -238,7 +254,7 @@ function getActionRecommendation(
     ]);
   }
 
-  if (avgSpeed > 12) {
+  if (avgSpeed > WIND_THRESHOLD_MODERATE) {
     return pickRandom([
       'Should be a fun session! 🌊',
       'Good day for some action! ⛵',
