@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
 
 export type TabId = 'conditions' | 'forecast' | 'about' | 'custom'
@@ -22,6 +23,14 @@ interface TabBarProps {
 
 /** Mobile-style bottom tab bar for navigation */
 export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
+  // Memoize click handler to prevent re-renders of child components
+  const handleTabClick = useCallback(
+    (tabId: TabId) => {
+      onTabChange(tabId)
+    },
+    [onTabChange]
+  )
+
   return (
     <Box
       as="nav"
@@ -40,37 +49,58 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id
           return (
-            <Flex
+            <TabButton
               key={tab.id}
-              as="button"
-              direction="column"
-              align="center"
-              justify="center"
-              flex={1}
-              h="100%"
-              cursor="pointer"
-              onClick={() => onTabChange(tab.id)}
-              role="tab"
-              aria-selected={isActive}
-              aria-label={tab.label}
-              _hover={{ bg: 'gray.50' }}
-              transition="background 0.15s"
-            >
-              <Text fontSize="lg" lineHeight="1" mb={0.5}>
-                {tab.icon}
-              </Text>
-              <Text
-                fontSize="2xs"
-                fontWeight={isActive ? '700' : '500'}
-                color={isActive ? 'blue.500' : 'gray.400'}
-                letterSpacing="wide"
-              >
-                {tab.label}
-              </Text>
-            </Flex>
+              tab={tab}
+              isActive={isActive}
+              onClick={handleTabClick}
+            />
           )
         })}
       </Flex>
     </Box>
+  )
+}
+
+/** Individual tab button component - memoized to prevent unnecessary re-renders */
+interface TabButtonProps {
+  readonly tab: TabItem
+  readonly isActive: boolean
+  readonly onClick: (tabId: TabId) => void
+}
+
+function TabButton({ tab, isActive, onClick }: TabButtonProps) {
+  const handleClick = useCallback(() => {
+    onClick(tab.id)
+  }, [onClick, tab.id])
+
+  return (
+    <Flex
+      as="button"
+      direction="column"
+      align="center"
+      justify="center"
+      flex={1}
+      h="100%"
+      cursor="pointer"
+      onClick={handleClick}
+      role="tab"
+      aria-selected={isActive}
+      aria-label={tab.label}
+      _hover={{ bg: 'gray.50' }}
+      transition="background 0.15s"
+    >
+      <Text fontSize="lg" lineHeight="1" mb={0.5}>
+        {tab.icon}
+      </Text>
+      <Text
+        fontSize="2xs"
+        fontWeight={isActive ? '700' : '500'}
+        color={isActive ? 'blue.500' : 'gray.400'}
+        letterSpacing="wide"
+      >
+        {tab.label}
+      </Text>
+    </Flex>
   )
 }

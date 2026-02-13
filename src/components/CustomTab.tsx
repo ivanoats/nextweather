@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Box, Flex, Text, VStack, Input } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
@@ -29,7 +29,7 @@ export default function CustomTab({
     }
   }, [])
 
-  function handleApply() {
+  const handleApply = useCallback(() => {
     if (!station.trim() || !tideStation.trim()) return
     onApply(station.trim(), tideStation.trim())
     setSaved(true)
@@ -38,7 +38,16 @@ export default function CustomTab({
       clearTimeout(timeoutRef.current)
     }
     timeoutRef.current = setTimeout(() => setSaved(false), 2000)
-  }
+  }, [station, tideStation, onApply])
+
+  // Memoize onChange handlers to prevent re-renders
+  const handleStationChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setStation(e.target.value)
+  }, [])
+
+  const handleTideStationChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setTideStation(e.target.value)
+  }, [])
 
   return (
     <MotionBox
@@ -62,7 +71,7 @@ export default function CustomTab({
               </Text>
               <Input
                 value={station}
-                onChange={(e) => setStation(e.target.value)}
+                onChange={handleStationChange}
                 placeholder="e.g. WPOW1"
                 size="md"
                 bg="gray.50"
@@ -84,7 +93,7 @@ export default function CustomTab({
               </Text>
               <Input
                 value={tideStation}
-                onChange={(e) => setTideStation(e.target.value)}
+                onChange={handleTideStationChange}
                 placeholder="e.g. 9447130"
                 size="md"
                 bg="gray.50"
