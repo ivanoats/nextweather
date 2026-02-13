@@ -1,13 +1,13 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-interface WeatherValue {
+export interface WeatherValue {
   unitCode: string;
   value: number | null;
   qualityControl: string;
 }
 
-interface ObservationProperties {
+export interface ObservationProperties {
   '@id': string;
   '@type': string;
   elevation: WeatherValue;
@@ -38,7 +38,7 @@ interface ObservationProperties {
   cloudLayers?: unknown;
 }
 
-interface ObservationFeature {
+export interface ObservationFeature {
   id: string;
   type: 'Feature';
   geometry: {
@@ -52,18 +52,18 @@ interface ObservationFeature {
  * NWS observation response following GeoJSON-LD format.
  * @see https://geojson.org/geojson-ld/ for GeoJSON-LD specification
  */
-interface ObservationFeatureCollection {
+export interface ObservationFeatureCollection {
   '@context': (string | object)[];
   type: 'FeatureCollection';
   features: ObservationFeature[];
 }
 
-interface SuccessResponse {
+export interface SuccessResponse {
   statusCode: 200;
   body: ObservationFeatureCollection;
 }
 
-interface ErrorResponse {
+export interface ErrorResponse {
   statusCode: 500;
   body: {
     message: string;
@@ -74,7 +74,7 @@ interface ErrorResponse {
   };
 }
 
-type ObservationResponse = SuccessResponse | ErrorResponse;
+export type ObservationResponse = SuccessResponse | ErrorResponse;
 
 const observations = async (
   req: NextApiRequest,
@@ -90,10 +90,11 @@ const observations = async (
       body: obs.data,
     });
   } catch (error) {
-    const errorDetails = error instanceof Error 
-      ? { name: error.name, message: error.message }
-      : { name: 'UnknownError', message: 'An error occurred' };
-    
+    const errorDetails =
+      error instanceof Error
+        ? { name: error.name, message: error.message }
+        : { name: 'UnknownError', message: 'An error occurred' };
+
     res.json({
       statusCode: 500,
       body: {
