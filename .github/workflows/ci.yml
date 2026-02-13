@@ -6,6 +6,12 @@ on:
   push:
     branches: [main]
 
+# Note: This project intentionally does not commit package-lock.json (see .gitignore)
+# Therefore we use 'npm install' instead of 'npm ci' and cannot use npm caching
+
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
