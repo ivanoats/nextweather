@@ -249,17 +249,20 @@ NextWeather relies on publicly available NOAA data:
 
 ## Documentation Agent Resources
 
-This repository includes comprehensive guides for creating GitHub Copilot documentation agents:
+This repository includes **comprehensive guides for creating GitHub Copilot documentation agents**.
 
-- **[Documentation Agent Guide](DOCUMENTATION_AGENT_GUIDE.md)** — Complete tutorial on
-  writing documentation agents with examples and best practices
-- **[Quick Reference](DOCUMENTATION_AGENT_QUICKREF.md)** — Essential tips and patterns
-  for quick lookup
-- **[Template](DOCUMENTATION_AGENT_TEMPLATE.md)** — Ready-to-use template for creating
-  your own documentation agent
+👉 **[Start Here: Documentation Agent Resources Index](DOCUMENTATION_AGENT_INDEX.md)** 👈
 
-These resources teach you how to create `.github/copilot-instructions.md` files that help
-GitHub Copilot better understand and assist with your projects.
+Learn how to create `.github/copilot-instructions.md` files that help GitHub Copilot better
+understand and assist with your projects. The index provides:
+
+- **[Complete Guide](DOCUMENTATION_AGENT_GUIDE.md)** — In-depth tutorial with examples and
+  best practices
+- **[Quick Reference](DOCUMENTATION_AGENT_QUICKREF.md)** — Essential tips for quick lookup
+- **[Template](DOCUMENTATION_AGENT_TEMPLATE.md)** — Copy-paste template to get started
+- **[Workflow & Diagrams](DOCUMENTATION_AGENT_WORKFLOW.md)** — Visual guides and process flows
+
+Perfect for developers who want to improve their AI coding assistant experience!
 
 ## License
 
