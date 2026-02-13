@@ -62,6 +62,7 @@ type ForecastComparison = {
   isSimilar: boolean; // current wind ~ forecast average
   currentSpeed: number;
   forecastAvg: number;
+  isGusty: boolean; // current wind gusts significantly higher than current wind
 };
 
 /** Helper to pick random item from array */
@@ -129,12 +130,18 @@ function compareForecastWithCurrent(
   const difference = forecastAvg - currentSpeed;
 
   // Define thresholds for comparison
-  const SIGNIFICANT_DIFFERENCE = 5; // More than 5 mph difference is significant
+  const SIGNIFICANT_DIFFERENCE = 5; // 5+ mph difference is significant
   const SIMILAR_THRESHOLD = SIGNIFICANT_DIFFERENCE; // Within 5 mph is considered similar
+  const GUST_WARNING_THRESHOLD = 10; // Gusts 10+ mph higher than current wind
 
-  const isCurrentStronger = difference < -SIGNIFICANT_DIFFERENCE; // forecast < current by more than 5 mph
-  const isForecastStronger = difference > SIGNIFICANT_DIFFERENCE; // forecast > current by more than 5 mph
-  const isSimilar = Math.abs(difference) <= SIMILAR_THRESHOLD;
+  const isCurrentStronger = difference <= -SIGNIFICANT_DIFFERENCE; // forecast <= current by 5+ mph
+  const isForecastStronger = difference >= SIGNIFICANT_DIFFERENCE; // forecast >= current by 5+ mph
+  const isSimilar = Math.abs(difference) < SIGNIFICANT_DIFFERENCE;
+
+  // Check if current gusts are significantly higher than current wind
+  const isGusty =
+    currentConditions.windGust != null &&
+    currentConditions.windGust - currentSpeed >= GUST_WARNING_THRESHOLD;
 
   return {
     isCurrentStronger,
@@ -142,6 +149,7 @@ function compareForecastWithCurrent(
     isSimilar,
     currentSpeed,
     forecastAvg,
+    isGusty,
   };
 }
 
@@ -390,6 +398,11 @@ export function generateForecastSummary(
     getWeatherContext(weather, avgTemp),
     getActionRecommendation(conditions, weather),
   ];
+
+  // Add gusty warning if current conditions are gusty
+  if (comparison?.isGusty) {
+    parts.push('⚠️ Watch for strong gusts!');
+  }
 
   return parts.join(' ');
 }

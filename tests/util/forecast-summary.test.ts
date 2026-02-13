@@ -443,5 +443,71 @@ describe('generateForecastSummary', () => {
           /🔥|⚡|💨/u.test(summary)
       ).toBe(true);
     });
+
+    it('should warn about gusty conditions when gusts are significantly higher', () => {
+      const periods = [
+        createMockPeriod('15 mph', 65, 'Sunny'),
+        createMockPeriod('16 mph', 66, 'Sunny'),
+        createMockPeriod('14 mph', 64, 'Sunny'),
+      ];
+
+      const currentConditions: CurrentConditions = {
+        windSpeed: 12, // Current wind speed
+        windGust: 25, // Gusts 13 mph higher - significant
+        windDirection: 320,
+      };
+
+      const summary = generateForecastSummary(periods, currentConditions);
+
+      // Should include gusty warning
+      expect(summary).toContain('Watch for strong gusts');
+    });
+
+    it('should not warn about gusts when difference is not significant', () => {
+      const periods = [
+        createMockPeriod('15 mph', 65, 'Sunny'),
+        createMockPeriod('16 mph', 66, 'Sunny'),
+        createMockPeriod('14 mph', 64, 'Sunny'),
+      ];
+
+      const currentConditions: CurrentConditions = {
+        windSpeed: 12,
+        windGust: 18, // Only 6 mph higher - not significant enough
+        windDirection: 320,
+      };
+
+      const summary = generateForecastSummary(periods, currentConditions);
+
+      // Should NOT include gusty warning
+      expect(summary).not.toContain('Watch for strong gusts');
+    });
+
+    it('should handle exactly 5 mph difference as significant', () => {
+      const periods = [
+        createMockPeriod('20 mph', 60, 'Partly Cloudy'),
+        createMockPeriod('20 mph', 61, 'Partly Cloudy'),
+        createMockPeriod('20 mph', 60, 'Partly Cloudy'),
+      ];
+
+      const currentConditions: CurrentConditions = {
+        windSpeed: 15, // Exactly 5 mph lower than forecast
+        windGust: 18,
+        windDirection: 320,
+      };
+
+      const summary = generateForecastSummary(periods, currentConditions);
+
+      // Should be treated as forecast stronger (excited)
+      expect(
+        summary.includes('Sweet!') ||
+          summary.includes('Nice!') ||
+          summary.includes('Perfect!') ||
+          summary.includes('Excellent!') ||
+          summary.includes('sick waves') ||
+          summary.includes('EPIC') ||
+          summary.includes('MAJOR') ||
+          /🎉|🚀|⛵|🏄|🔥|⚡/u.test(summary)
+      ).toBe(true);
+    });
   });
 });
