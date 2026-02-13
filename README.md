@@ -55,11 +55,11 @@ graph LR
 
 ### API Endpoints
 
-| Endpoint | Source | Description |
-| --- | --- | --- |
+| Endpoint                                      | Source          | Description                                                   |
+| --------------------------------------------- | --------------- | ------------------------------------------------------------- |
 | `/api/nbdc?station=WPOW1&tideStation=9447130` | NDBC + NOAA T&C | Wind speed/direction/gust, air temp, tide level & predictions |
-| `/api/forecast?station=KSEA` | NWS | Hourly wind & weather forecast for a station |
-| `/api/observations?station=KSEA` | NWS | Latest weather observations for a station |
+| `/api/forecast?station=KSEA`                  | NWS             | Hourly wind & weather forecast for a station                  |
+| `/api/observations?station=KSEA`              | NWS             | Latest weather observations for a station                     |
 
 #### API Implementation Details
 
@@ -73,10 +73,10 @@ NDBC data parsing uses column index constants for the realtime2 space-delimited 
 
 ```typescript
 const NDBC_COLUMNS = {
-  WDIR: 5,   // Wind direction (degrees True)
-  WSPD: 6,   // Wind speed (m/s)
-  GST: 7,    // Wind gust (m/s)
-  ATMP: 13,  // Air temperature (°C)
+  WDIR: 5, // Wind direction (degrees True)
+  WSPD: 6, // Wind speed (m/s)
+  GST: 7, // Wind gust (m/s)
+  ATMP: 13, // Air temperature (°C)
 } as const;
 ```
 
@@ -88,15 +88,15 @@ const NWS_USER_AGENT = 'NextWeather/1.0 (westpointwind.com)';
 
 ### Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| Framework | Next.js 16 (Pages Router) |
-| UI | React 19, Chakra UI v3, Framer Motion |
-| Language | TypeScript (new code) / JavaScript (legacy) |
-| Charts | Recharts |
-| Testing | Jest 30, React Testing Library, `next-test-api-route-handler` |
-| Component Dev | Storybook 10 |
-| Deployment | Netlify |
+| Layer            | Technology                                                           |
+| ---------------- | -------------------------------------------------------------------- |
+| Framework        | Next.js 16 (Pages Router)                                            |
+| UI               | React 19, Chakra UI v3, Framer Motion                                |
+| Language         | TypeScript (new code) / JavaScript (legacy)                          |
+| Charts           | Recharts                                                             |
+| Testing          | Jest 30, React Testing Library, `next-test-api-route-handler`        |
+| Component Dev    | Storybook 10                                                         |
+| Deployment       | Netlify                                                              |
 | Commit Standards | Commitizen + commitlint (Conventional Commits + Conventional Branch) |
 
 ## Getting Started
@@ -174,6 +174,50 @@ docs: update API endpoint table in README
 - Tests in `tests/` mirroring the source tree
 - Storybook stories in `stories/`
 
+## Continuous Integration
+
+NextWeather uses GitHub Actions to maintain code quality and security:
+
+### CI Workflow
+
+Runs on every pull request and push to `main`:
+
+- **Linting** — ESLint for JavaScript/TypeScript code style and Markdownlint for documentation
+- **Type Checking** — TypeScript compilation without code generation (`tsc --noEmit`)
+- **Testing** — Jest test suite with coverage for all API endpoints and components
+- **Building** — Next.js production build validation
+
+All jobs run in parallel for faster feedback.
+
+### Dependabot
+
+Automatically creates pull requests for dependency updates:
+
+- **NPM packages** — Weekly updates for production and development dependencies
+- **GitHub Actions** — Weekly updates for workflow actions
+- **Grouped updates** — Minor and patch versions grouped to reduce noise
+- **Auto-labeled** — PRs tagged with `dependencies` for easy filtering
+
+### Pull Request Labeling
+
+Automatically labels PRs based on changed files:
+
+- `documentation` — Markdown files and docs
+- `dependencies` — package.json changes
+- `tests` — Test files
+- `api` — API route changes
+- `components` — React component changes
+- `ui` — UI-related changes (components, styles, stories)
+- `configuration` — Config file changes
+
+### CodeQL Security Scanning
+
+Runs weekly and on pushes/PRs to scan for security vulnerabilities:
+
+- JavaScript/TypeScript analysis
+- Automatic security alerts
+- Integration with GitHub Security tab
+
 ## API Types
 
 NextWeather provides comprehensive TypeScript types for all API responses:
@@ -183,12 +227,12 @@ NextWeather provides comprehensive TypeScript types for all API responses:
 ```typescript
 type Observations = {
   stationId?: string;
-  windSpeed?: number;     // Converted to MPH
+  windSpeed?: number; // Converted to MPH
   windDirection?: number; // Degrees
-  windGust?: number;      // Converted to MPH  
-  airTemp?: number;       // Converted to Fahrenheit
-  currentTide?: string;   // Current level
-  nextTide?: string;      // Next tide prediction
+  windGust?: number; // Converted to MPH
+  airTemp?: number; // Converted to Fahrenheit
+  currentTide?: string; // Current level
+  nextTide?: string; // Next tide prediction
   nextTideAfter?: string; // Following tide prediction
 };
 ```

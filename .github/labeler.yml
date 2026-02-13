@@ -1,0 +1,37 @@
+# Automatically label PRs based on changed files
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file: ['**/*.md', 'docs/**/*']
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file: ['package.json', 'package-lock.json']
+
+tests:
+  - changed-files:
+    - any-glob-to-any-file: ['tests/**/*', '**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx']
+
+api:
+  - changed-files:
+    - any-glob-to-any-file: ['src/pages/api/**/*']
+
+components:
+  - changed-files:
+    - any-glob-to-any-file: ['src/components/**/*']
+
+ui:
+  - changed-files:
+    - any-glob-to-any-file: ['src/components/**/*', 'styles/**/*', 'stories/**/*']
+
+configuration:
+  - changed-files:
+    - any-glob-to-any-file: [
+      '.github/**/*',
+      '*.config.js',
+      '*.config.ts',
+      'tsconfig.json',
+      '.eslintrc*',
+      '.prettierrc*',
+      'netlify.toml'
+    ]
