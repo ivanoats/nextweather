@@ -288,7 +288,7 @@ Install recommended extensions (add to `.vscode/extensions.json`):
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "vitest.explorer",
+    "Orta.vscode-jest",
     "ms-vscode.vscode-typescript-next"
   ]
 }
