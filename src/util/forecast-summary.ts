@@ -129,11 +129,11 @@ function compareForecastWithCurrent(
   const difference = forecastAvg - currentSpeed;
 
   // Define thresholds for comparison
-  const SIMILAR_THRESHOLD = 3; // Within 3 mph is considered similar
-  const SIGNIFICANT_DIFFERENCE = 5; // 5+ mph difference is significant
+  const SIGNIFICANT_DIFFERENCE = 5; // More than 5 mph difference is significant
+  const SIMILAR_THRESHOLD = SIGNIFICANT_DIFFERENCE; // Within 5 mph is considered similar
 
-  const isCurrentStronger = difference < -SIGNIFICANT_DIFFERENCE; // forecast < current by 5+ mph
-  const isForecastStronger = difference > SIGNIFICANT_DIFFERENCE; // forecast > current by 5+ mph
+  const isCurrentStronger = difference < -SIGNIFICANT_DIFFERENCE; // forecast < current by more than 5 mph
+  const isForecastStronger = difference > SIGNIFICANT_DIFFERENCE; // forecast > current by more than 5 mph
   const isSimilar = Math.abs(difference) <= SIMILAR_THRESHOLD;
 
   return {
