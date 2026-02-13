@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+husky_sh="$(dirname -- "$0")/_/husky.sh"
+if [ -r "$husky_sh" ]; then
+  . "$husky_sh"
+else
+  echo "warning: .husky/_/husky.sh not found; continuing without Husky helper" >&2
+fi
 
 echo "Running pre-push checks..."
 
