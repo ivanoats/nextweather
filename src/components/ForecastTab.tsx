@@ -252,8 +252,12 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
           `Failed to fetch forecast (${forecastRes.value.status})`
         );
       } else {
+        const errorMsg =
+          forecastRes.reason instanceof Error
+            ? forecastRes.reason.message
+            : String(forecastRes.reason);
         throw new Error(
-          `Failed to fetch forecast: ${forecastRes.reason?.message || 'Network error'}`
+          `Failed to fetch forecast: ${errorMsg || 'Network error'}`
         );
       }
 
