@@ -42,12 +42,26 @@ export type ForecastPeriod = {
   isDaytime: boolean;
 };
 
+export type CurrentConditions = {
+  windSpeed?: number;
+  windGust?: number;
+  windDirection?: number;
+};
+
 type WindCondition = {
   avgSpeed: number;
   maxSpeed: number;
   minSpeed: number;
   sustainedHighWind: boolean; // true if multiple consecutive periods > threshold
   gusty: boolean;
+};
+
+type ForecastComparison = {
+  isCurrentlyBetter: boolean; // current wind > forecast average
+  isCurrentlyWorse: boolean; // current wind < forecast average by significant margin
+  isSimilar: boolean; // current wind ~ forecast average
+  currentSpeed: number;
+  forecastAvg: number;
 };
 
 /** Helper to pick random item from array */
@@ -93,10 +107,42 @@ function analyzeWindConditions(periods: ForecastPeriod[]): WindCondition {
   const sustainedHighWind = maxConsecutive >= MIN_CONSECUTIVE_PERIODS_SUSTAINED;
 
   // Gusty if many periods have range differences > threshold
-  const gustyPeriods = speeds.filter((s) => s.max - s.avg > GUST_RANGE_THRESHOLD).length;
+  const gustyPeriods = speeds.filter(
+    (s) => s.max - s.avg > GUST_RANGE_THRESHOLD
+  ).length;
   const gusty = gustyPeriods > periods.length / 3;
 
   return { avgSpeed, maxSpeed, minSpeed, sustainedHighWind, gusty };
+}
+
+/** Compare current conditions with forecast to avoid over-excitement */
+function compareForecastWithCurrent(
+  forecastConditions: WindCondition,
+  currentConditions?: CurrentConditions
+): ForecastComparison | null {
+  if (!currentConditions?.windSpeed) {
+    return null;
+  }
+
+  const currentSpeed = currentConditions.windSpeed;
+  const forecastAvg = forecastConditions.avgSpeed;
+  const difference = forecastAvg - currentSpeed;
+
+  // Define thresholds for comparison
+  const SIMILAR_THRESHOLD = 3; // Within 3 mph is considered similar
+  const BETTER_THRESHOLD = 5; // Current must be 5+ mph higher to be "better"
+
+  const isCurrentlyBetter = difference < -BETTER_THRESHOLD; // forecast < current by 5+ mph
+  const isCurrentlyWorse = difference > BETTER_THRESHOLD; // forecast > current by 5+ mph
+  const isSimilar = Math.abs(difference) <= SIMILAR_THRESHOLD;
+
+  return {
+    isCurrentlyBetter,
+    isCurrentlyWorse,
+    isSimilar,
+    currentSpeed,
+    forecastAvg,
+  };
 }
 
 /** Get dominant weather condition from periods */
@@ -125,9 +171,54 @@ function getDominantWeather(periods: ForecastPeriod[]): string {
 }
 
 /** Generate excited opening based on wind conditions */
-function getExcitedOpening(conditions: WindCondition): string {
+function getExcitedOpening(
+  conditions: WindCondition,
+  comparison: ForecastComparison | null
+): string {
   const { avgSpeed, sustainedHighWind } = conditions;
 
+  // If current conditions are already better than forecast, tone it down
+  if (comparison?.isCurrentlyBetter) {
+    if (avgSpeed > WIND_THRESHOLD_HIGH) {
+      return pickRandom([
+        '💨 Still looking solid ahead!',
+        '🌊 Conditions holding steady!',
+        '⛵ Should stay pretty good!',
+        '👍 Wind staying consistent!',
+      ]);
+    }
+    if (avgSpeed > WIND_THRESHOLD_MODERATE) {
+      return pickRandom([
+        '😊 Currently better than forecast!',
+        '✨ Enjoy it while it lasts!',
+        '🌬️ Making the most of current conditions!',
+      ]);
+    }
+    // Forecast predicts lighter than current light wind
+    return pickRandom([
+      '🍃 Wind might ease up.',
+      '😌 Expecting lighter breeze ahead.',
+      '🛶 Could mellow out later.',
+    ]);
+  }
+
+  // If current is similar to forecast, emphasize steady conditions
+  if (comparison?.isSimilar && sustainedHighWind) {
+    if (avgSpeed > WIND_THRESHOLD_HIGH) {
+      return pickRandom([
+        '🎯 Steady strong wind all day!',
+        '⛵ Consistent solid conditions!',
+        '🌊 Staying steady and strong!',
+      ]);
+    }
+    return pickRandom([
+      '👌 Nice and steady today!',
+      '✨ Consistent breeze throughout!',
+      '🌬️ Holding steady!',
+    ]);
+  }
+
+  // Original excitement levels for improving or no current data
   if (sustainedHighWind && avgSpeed > WIND_THRESHOLD_EPIC) {
     return pickRandom([
       '🔥 EPIC wind day ahead!',
@@ -273,21 +364,28 @@ function getActionRecommendation(
 /**
  * Generate a natural language summary of the forecast
  * Focuses on wind conditions for water sports enthusiasts
+ *
+ * @param periods - Array of forecast periods from NWS API
+ * @param currentConditions - Optional current wind conditions to compare against forecast
  */
-export function generateForecastSummary(periods: ForecastPeriod[]): string {
+export function generateForecastSummary(
+  periods: ForecastPeriod[],
+  currentConditions?: CurrentConditions
+): string {
   if (!periods || periods.length === 0) {
     return 'No forecast data available.';
   }
 
   // Analyze conditions
   const conditions = analyzeWindConditions(periods);
+  const comparison = compareForecastWithCurrent(conditions, currentConditions);
   const weather = getDominantWeather(periods);
   const avgTemp =
     periods.reduce((sum, p) => sum + p.temperature, 0) / periods.length;
 
   // Build summary
   const parts = [
-    getExcitedOpening(conditions),
+    getExcitedOpening(conditions, comparison),
     getWindDescription(conditions),
     getWeatherContext(weather, avgTemp),
     getActionRecommendation(conditions, weather),

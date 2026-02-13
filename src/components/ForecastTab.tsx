@@ -12,6 +12,7 @@ import {
 import {
   generateForecastSummary,
   type ForecastPeriod,
+  type CurrentConditions,
 } from '../util/forecast-summary';
 
 const MotionBox = motion.create(Box);
@@ -142,8 +143,17 @@ function weatherIcon(forecast: string, isDaytime: boolean): string {
 }
 
 /** Forecast summary card with natural language description */
-function ForecastSummary({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
-  const summary = useMemo(() => generateForecastSummary(periods), [periods]);
+function ForecastSummary({
+  periods,
+  currentConditions,
+}: Readonly<{
+  periods: ForecastPeriod[];
+  currentConditions?: CurrentConditions;
+}>) {
+  const summary = useMemo(
+    () => generateForecastSummary(periods, currentConditions),
+    [periods, currentConditions]
+  );
 
   return (
     <Box
@@ -217,6 +227,8 @@ function ForecastRow({
 /** Forecast tab showing hourly wind forecast from NWS (HRRR-based) */
 export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
   const [data, setData] = useState<ForecastData | null>(null);
+  const [currentConditions, setCurrentConditions] =
+    useState<CurrentConditions | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -224,11 +236,32 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
     try {
       setError(null);
       setLoading(true);
-      const params = new URLSearchParams({ station });
-      const res = await fetch(`/api/forecast?${params.toString()}`);
-      if (!res.ok) throw new Error(`Failed to fetch forecast (${res.status})`);
-      const json: ForecastData = await res.json();
-      setData(json);
+
+      // Fetch both forecast and current conditions in parallel
+      const [forecastRes, currentRes] = await Promise.allSettled([
+        fetch(`/api/forecast?${new URLSearchParams({ station })}`),
+        fetch(`/api/nbdc?${new URLSearchParams({ station })}`),
+      ]);
+
+      // Handle forecast response
+      if (forecastRes.status === 'fulfilled' && forecastRes.value.ok) {
+        const json: ForecastData = await forecastRes.value.json();
+        setData(json);
+      } else {
+        throw new Error(
+          `Failed to fetch forecast (${forecastRes.status === 'fulfilled' ? forecastRes.value.status : 'rejected'})`
+        );
+      }
+
+      // Handle current conditions (non-critical, can fail silently)
+      if (currentRes.status === 'fulfilled' && currentRes.value.ok) {
+        const json = await currentRes.value.json();
+        setCurrentConditions({
+          windSpeed: json.windSpeed,
+          windGust: json.windGust,
+          windDirection: json.windDirection,
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -335,7 +368,10 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
 
           {data && !loading && (
             <>
-              <ForecastSummary periods={data.periods} />
+              <ForecastSummary
+                periods={data.periods}
+                currentConditions={currentConditions ?? undefined}
+              />
               <WindSparkline periods={data.periods} />
               {/* Group by day */}
               {groupByDay(data.periods).map(([day, periods]) => (
