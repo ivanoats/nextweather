@@ -163,7 +163,7 @@ fix: handle missing tide predictions gracefully
 docs: update API endpoint table in README
 ```
 
-This project uses [Conventional-Branch](https://conventional-branch.github.io/)
+Branch naming follows the [Conventional-Branch](https://conventional-branch.github.io/) guidelines where possible, but this is not currently enforced by tooling.
 
 ## Testing Approach
 - API endpoints tested with `next-test-api-route-handler` using `pagesHandler` config
