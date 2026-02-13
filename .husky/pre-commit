@@ -1,11 +1,4 @@
 #!/usr/bin/env sh
-HUSKY_SH="$(dirname -- "$0")/_/husky.sh"
-if [ -f "$HUSKY_SH" ]; then
-  . "$HUSKY_SH"
-else
-  echo "husky: warning: $HUSKY_SH not found, skipping Husky helper. Run 'npm install' to finish setup." >&2
-fi
-
 # Run lint-staged (linting and formatting on staged files)
 npm run lint-staged || exit 1
 
