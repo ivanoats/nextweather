@@ -10,5 +10,6 @@
  * leadingZero(12)  // Returns "12"
  */
 export default function leadingZero(num: number): string {
-  return `${num}`.length === 1 ? `0` + `${num}` : `${num}`
+  const asString = num.toString()
+  return asString.length === 1 ? `0` + asString : asString
 }

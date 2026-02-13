@@ -12,21 +12,38 @@ describe('/api/observations', () => {
 
   it('returns observation data with default station', async () => {
     const mockObservationData = {
-      '@context': 'https://geojson.org/geojson-ld/geojson-context.jsonld',
-      type: 'FeatureCollection',
+      '@context': ['https://geojson.org/geojson-ld/geojson-context.jsonld'],
+      type: 'FeatureCollection' as const,
       features: [
         {
+          id: 'https://api.weather.gov/stations/KSEA/observations/2026-02-12T15:00:00+00:00',
+          type: 'Feature' as const,
+          geometry: {
+            type: 'Point' as const,
+            coordinates: [-122.44, 47.66] as [number, number],
+          },
           properties: {
-            temperature: { value: 10 },
-            windSpeed: { value: 5 },
-            windDirection: { value: 180 },
+            '@id': 'https://api.weather.gov/stations/KSEA/observations/2026-02-12T15:00:00+00:00',
+            '@type': 'wx:ObservationStation',
+            elevation: { unitCode: 'wmoUnit:m', value: 3, qualityControl: 'V' },
+            station: 'https://api.weather.gov/stations/KSEA',
+            timestamp: '2026-02-12T15:00:00+00:00',
+            rawMessage: '',
+            textDescription: '',
+            icon: null,
+            presentWeather: [],
+            temperature: { unitCode: 'wmoUnit:degC', value: 10, qualityControl: 'V' },
+            dewpoint: { unitCode: 'wmoUnit:degC', value: 5, qualityControl: 'V' },
+            windSpeed: { unitCode: 'wmoUnit:km_h-1', value: 5, qualityControl: 'V' },
+            windDirection: { unitCode: 'wmoUnit:degree_(angle)', value: 180, qualityControl: 'V' },
+            windGust: { unitCode: 'wmoUnit:km_h-1', value: null, qualityControl: 'Z' },
           },
         },
       ],
     };
 
     mockedAxios.get.mockResolvedValueOnce({
-      data: JSON.stringify(mockObservationData),
+      data: mockObservationData,
     });
 
     await testApiHandler({
@@ -46,6 +63,8 @@ describe('/api/observations', () => {
 
   it('uses custom station query parameter', async () => {
     const mockObservationData = {
+      '@context': ['https://geojson.org/geojson-ld/geojson-context.jsonld'],
+      type: 'FeatureCollection' as const,
       features: [],
     };
 
@@ -82,19 +101,39 @@ describe('/api/observations', () => {
         const body = await res.json();
 
         expect(body).toHaveProperty('statusCode', 500);
-        expect(body).toHaveProperty('body');
-        expect(body.body).toBeDefined();
+        expect(body.body).toHaveProperty('message', 'Network error');
+        expect(body.body).toHaveProperty('error');
       },
     });
   });
 
   it('returns valid response structure', async () => {
     const mockObservationData = {
+      '@context': ['https://geojson.org/geojson-ld/geojson-context.jsonld'],
+      type: 'FeatureCollection' as const,
       features: [
         {
+          id: 'https://api.weather.gov/stations/WPOW1/observations/2026-02-10T15:00:00+00:00',
+          type: 'Feature' as const,
+          geometry: {
+            type: 'Point' as const,
+            coordinates: [-122.44, 47.66] as [number, number],
+          },
           properties: {
+            '@id': 'https://api.weather.gov/stations/WPOW1/observations/2026-02-10T15:00:00+00:00',
+            '@type': 'wx:ObservationStation',
+            elevation: { unitCode: 'wmoUnit:m', value: 3, qualityControl: 'V' },
+            station: 'https://api.weather.gov/stations/WPOW1',
             timestamp: '2026-02-10T15:00:00+00:00',
-            temperature: { value: 12.5 },
+            rawMessage: '',
+            textDescription: '',
+            icon: null,
+            presentWeather: [],
+            temperature: { unitCode: 'wmoUnit:degC', value: 12.5, qualityControl: 'V' },
+            dewpoint: { unitCode: 'wmoUnit:degC', value: null, qualityControl: 'Z' },
+            windSpeed: { unitCode: 'wmoUnit:km_h-1', value: 10, qualityControl: 'V' },
+            windDirection: { unitCode: 'wmoUnit:degree_(angle)', value: 180, qualityControl: 'V' },
+            windGust: { unitCode: 'wmoUnit:km_h-1', value: null, qualityControl: 'Z' },
           },
         },
       ],
