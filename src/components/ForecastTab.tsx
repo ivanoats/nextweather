@@ -66,7 +66,7 @@ function isWindDifferent(
   forecastPeriod: ForecastPeriod | undefined,
   currentConditions: CurrentConditions | undefined
 ): { isDifferent: boolean; message: string } | null {
-  if (!forecastPeriod || !currentConditions?.windSpeed) {
+  if (!forecastPeriod || currentConditions?.windSpeed == null) {
     return null;
   }
 
