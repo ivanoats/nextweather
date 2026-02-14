@@ -288,4 +288,92 @@ describe('ForecastTab', () => {
     expect(await screen.findByText('Wind Forecast')).toBeInTheDocument();
     expect(await screen.findByText('10 mph')).toBeInTheDocument();
   });
+
+  it('shows wind difference warning when current wind is 0 mph (calm) but forecast is significant', async () => {
+    const calmConditions = {
+      stationId: 'WPOW1',
+      windSpeed: 0, // Calm conditions
+      windGust: 0,
+      windDirection: 0,
+      airTemp: 48,
+    };
+
+    const windyForecast = {
+      ...mockFetchResponse,
+      periods: [
+        {
+          ...mockFetchResponse.periods[0],
+          windSpeed: '10 mph', // Forecast shows wind picking up
+        },
+      ],
+    };
+
+    globalThis.fetch = jest.fn((url) => {
+      if (url.includes('/api/forecast')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(windyForecast),
+        });
+      }
+      if (url.includes('/api/nbdc')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(calmConditions),
+        });
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    }) as jest.Mock;
+
+    renderForecastTab();
+
+    // Should show warning that current conditions differ from forecast
+    expect(await screen.findByText('Wind Forecast')).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Actual conditions are lower than predicted/)
+    ).toBeInTheDocument();
+  });
+
+  it('shows wind difference warning when actual wind is higher than forecast', async () => {
+    const windyCurrentConditions = {
+      stationId: 'WPOW1',
+      windSpeed: 16, // Actual conditions are windier than forecast
+      windGust: 20,
+      windDirection: 180,
+      airTemp: 48,
+    };
+
+    const calmerForecast = {
+      ...mockFetchResponse,
+      periods: [
+        {
+          ...mockFetchResponse.periods[0],
+          windSpeed: '9 mph', // Forecast shows lighter wind than actual
+        },
+      ],
+    };
+
+    globalThis.fetch = jest.fn((url) => {
+      if (url.includes('/api/forecast')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(calmerForecast),
+        });
+      }
+      if (url.includes('/api/nbdc')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(windyCurrentConditions),
+        });
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    }) as jest.Mock;
+
+    renderForecastTab();
+
+    // Should show warning that actual conditions are windier than forecast
+    expect(await screen.findByText('Wind Forecast')).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Actual conditions are higher than predicted/)
+    ).toBeInTheDocument();
+  });
 });
