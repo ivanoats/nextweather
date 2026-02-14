@@ -1,7 +1,7 @@
-import { Box, Link, Text, VStack, HStack } from '@chakra-ui/react'
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-const MotionBox = motion.create(Box)
+import { Box, Link, Text, VStack, HStack } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+const MotionBox = motion.create(Box);
 
 /** About tab content describing the NextWeather app */
 export default function AboutTab() {
@@ -12,19 +12,25 @@ export default function AboutTab() {
       transition={{ duration: 0.2 }}
     >
       <VStack gap={4} align="stretch">
-        <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
+        <Box
+          bg="white"
+          borderRadius="2xl"
+          boxShadow="0 1px 3px rgba(0,0,0,0.08)"
+          px={6}
+          py={5}
+        >
           <HStack gap={7} align="center">
-          <Box flexShrink={0}>
+            <Box flexShrink={0}>
               <Image
-                src="/west-point-logo.png"
+                src="/west-point-logo-48w.webp"
                 alt="west point wind"
                 width={32}
                 height={32}
               />
             </Box>
-          <Text fontSize="xl" fontWeight="800" color="gray.800" mb={3}>
-            About WestPointWind
-          </Text>
+            <Text fontSize="xl" fontWeight="800" color="gray.800" mb={3}>
+              About WestPointWind
+            </Text>
           </HStack>
           <VStack gap={3} align="stretch">
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
@@ -35,8 +41,8 @@ export default function AboutTab() {
             </Text>
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               The app pulls real-time data from NOAA sources including the
-              National Data Buoy Center (NDBC) for wind observations and
-              NOAA Tides &amp; Currents for tide levels and predictions.
+              National Data Buoy Center (NDBC) for wind observations and NOAA
+              Tides &amp; Currents for tide levels and predictions.
             </Text>
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               Data refreshes automatically every 5 minutes so you always have
@@ -45,23 +51,41 @@ export default function AboutTab() {
           </VStack>
         </Box>
 
-        <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
+        <Box
+          bg="white"
+          borderRadius="2xl"
+          boxShadow="0 1px 3px rgba(0,0,0,0.08)"
+          px={6}
+          py={5}
+        >
           <Text fontSize="md" fontWeight="700" color="gray.800" mb={2}>
             Data Sources
           </Text>
           <VStack gap={2} align="stretch">
-            <DataSourceRow label="Wind & Temperature" value="NDBC Realtime Observations" />
+            <DataSourceRow
+              label="Wind & Temperature"
+              value="NDBC Realtime Observations"
+            />
             <DataSourceRow label="Tide Levels" value="NOAA Tides & Currents" />
             <DataSourceRow label="Refresh Interval" value="Every 5 minutes" />
           </VStack>
         </Box>
 
-        <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
+        <Box
+          bg="white"
+          borderRadius="2xl"
+          boxShadow="0 1px 3px rgba(0,0,0,0.08)"
+          px={6}
+          py={5}
+        >
           <Text fontSize="md" fontWeight="700" color="gray.800" mb={2}>
             Default Station
           </Text>
           <VStack gap={2} align="stretch">
-            <DataSourceRow label="Weather Station" value="WPOW1 (West Point, WA)" />
+            <DataSourceRow
+              label="Weather Station"
+              value="WPOW1 (West Point, WA)"
+            />
             <DataSourceRow label="Tide Station" value="9447130 (Seattle)" />
           </VStack>
           <Text fontSize="xs" color="gray.400" mt={3}>
@@ -69,12 +93,24 @@ export default function AboutTab() {
           </Text>
         </Box>
 
-        <Box bg="white" borderRadius="2xl" boxShadow="0 1px 3px rgba(0,0,0,0.08)" px={6} py={5}>
+        <Box
+          bg="white"
+          borderRadius="2xl"
+          boxShadow="0 1px 3px rgba(0,0,0,0.08)"
+          px={6}
+          py={5}
+        >
           <Text fontSize="md" fontWeight="700" color="gray.800" mb={2}>
             About the Creator
           </Text>
           <VStack gap={3} align="stretch">
-            <Box position="relative" w="100%" h="300px" borderRadius="xl" overflow="hidden">
+            <Box
+              position="relative"
+              w="100%"
+              h="300px"
+              borderRadius="xl"
+              overflow="hidden"
+            >
               <Image
                 src="/ivan-on-oc.jpg"
                 alt="Ivan Storck paddling an outrigger canoe"
@@ -84,18 +120,28 @@ export default function AboutTab() {
             </Box>
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               Developed by{' '}
-              <Link href="https://ivanstorck.com" target="_blank" rel="noopener noreferrer" color="blue.500">
+              <Link
+                href="https://ivanstorck.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                color="blue.500"
+              >
                 Ivan Storck
               </Link>
-              , a software engineer and avid paddler based in
-              Seattle. WestPointWind was born out of a desire for a simple,
-              mobile-friendly way to check local conditions before heading out on
-              the water.
+              , a software engineer and avid paddler based in Seattle.
+              WestPointWind was born out of a desire for a simple,
+              mobile-friendly way to check local conditions before heading out
+              on the water.
             </Text>
             <Text fontSize="sm" color="gray.600" lineHeight="tall">
               If you have feedback or suggestions for improving the app, please
               reach out on{' '}
-              <Link href="https://github.com/ivanoats/nextweather/issues" target="_blank" rel="noopener noreferrer" color="blue.500">
+              <Link
+                href="https://github.com/ivanoats/nextweather/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                color="blue.500"
+              >
                 GitHub
               </Link>
               .
@@ -104,12 +150,20 @@ export default function AboutTab() {
         </Box>
       </VStack>
     </MotionBox>
-  )
+  );
 }
 
-function DataSourceRow({ label, value }: Readonly<{ label: string; value: string }>) {
+function DataSourceRow({
+  label,
+  value,
+}: Readonly<{ label: string; value: string }>) {
   return (
-    <Box display="flex" justifyContent="space-between" alignItems="center" py={1}>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      py={1}
+    >
       <Text fontSize="sm" fontWeight="600" color="gray.400">
         {label}
       </Text>
@@ -117,5 +171,5 @@ function DataSourceRow({ label, value }: Readonly<{ label: string; value: string
         {value}
       </Text>
     </Box>
-  )
+  );
 }

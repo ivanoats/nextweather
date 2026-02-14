@@ -1,7 +1,7 @@
-import Head from 'next/head'
-import dynamic from 'next/dynamic'
-import Image from 'next/image'
-import { useEffect, useState, useCallback, memo } from 'react'
+import Head from 'next/head';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import { useEffect, useState, useCallback, memo } from 'react';
 import {
   Box,
   Container,
@@ -10,69 +10,144 @@ import {
   Text,
   VStack,
   Spinner,
-} from '@chakra-ui/react'
-import { motion, AnimatePresence } from 'framer-motion'
-import TabBar, { type TabId } from '../components/TabBar'
+} from '@chakra-ui/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import TabBar, { type TabId } from '../components/TabBar';
 
 // Lazy load tab components to reduce initial bundle size
 const AboutTab = dynamic(() => import('../components/AboutTab'), {
-  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
-})
+  loading: () => (
+    <Flex justify="center" align="center" minH="300px">
+      <Spinner size="lg" color="blue.400" />
+    </Flex>
+  ),
+});
 const CustomTab = dynamic(() => import('../components/CustomTab'), {
-  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
-})
+  loading: () => (
+    <Flex justify="center" align="center" minH="300px">
+      <Spinner size="lg" color="blue.400" />
+    </Flex>
+  ),
+});
 const ForecastTab = dynamic(() => import('../components/ForecastTab'), {
-  loading: () => <Flex justify="center" align="center" minH="300px"><Spinner size="lg" color="blue.400" /></Flex>,
-})
+  loading: () => (
+    <Flex justify="center" align="center" minH="300px">
+      <Spinner size="lg" color="blue.400" />
+    </Flex>
+  ),
+});
 
-const MotionBox = motion.create(Box)
-const MotionFlex = motion.create(Flex)
+const MotionBox = motion.create(Box);
+const MotionFlex = motion.create(Flex);
 
 type Observations = {
-  stationId?: string
-  windSpeed?: number
-  windDirection?: number
-  windGust?: number
-  airTemp?: number
-  currentTide?: string
-  nextTide?: string
-  nextTideAfter?: string
-}
+  stationId?: string;
+  windSpeed?: number;
+  windDirection?: number;
+  windGust?: number;
+  airTemp?: number;
+  currentTide?: string;
+  nextTide?: string;
+  nextTideAfter?: string;
+};
 
 /** Cardinal direction label from degrees */
 function degToCompass(deg: number): string {
   const dirs = [
-    'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
-    'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW',
-  ]
-  return dirs[Math.round(deg / 22.5) % 16]
+    'N',
+    'NNE',
+    'NE',
+    'ENE',
+    'E',
+    'ESE',
+    'SE',
+    'SSE',
+    'S',
+    'SSW',
+    'SW',
+    'WSW',
+    'W',
+    'WNW',
+    'NW',
+    'NNW',
+  ];
+  return dirs[Math.round(deg / 22.5) % 16];
 }
 
 /** Simple SVG compass arrow */
-const WindCompass = memo(function WindCompass({ direction }: Readonly<{ direction?: number }>) {
-  if (direction === undefined) return null
+const WindCompass = memo(function WindCompass({
+  direction,
+}: Readonly<{ direction?: number }>) {
+  if (direction === undefined) return null;
   return (
     <Box position="relative" w="80px" h="80px" flexShrink={0}>
       <svg viewBox="0 0 100 100" width="80" height="80">
-        <circle cx="50" cy="50" r="46" fill="none" stroke="#cbd5e1" strokeWidth="2" />
+        <circle
+          cx="50"
+          cy="50"
+          r="46"
+          fill="none"
+          stroke="#cbd5e1"
+          strokeWidth="2"
+        />
         {/* Cardinal labels */}
-        <text x="50" y="14" textAnchor="middle" fontSize="10" fill="#94a3b8" fontWeight="bold">N</text>
-        <text x="50" y="96" textAnchor="middle" fontSize="10" fill="#94a3b8" fontWeight="bold">S</text>
-        <text x="8" y="54" textAnchor="middle" fontSize="10" fill="#94a3b8" fontWeight="bold">W</text>
-        <text x="92" y="54" textAnchor="middle" fontSize="10" fill="#94a3b8" fontWeight="bold">E</text>
+        <text
+          x="50"
+          y="14"
+          textAnchor="middle"
+          fontSize="10"
+          fill="#94a3b8"
+          fontWeight="bold"
+        >
+          N
+        </text>
+        <text
+          x="50"
+          y="96"
+          textAnchor="middle"
+          fontSize="10"
+          fill="#94a3b8"
+          fontWeight="bold"
+        >
+          S
+        </text>
+        <text
+          x="8"
+          y="54"
+          textAnchor="middle"
+          fontSize="10"
+          fill="#94a3b8"
+          fontWeight="bold"
+        >
+          W
+        </text>
+        <text
+          x="92"
+          y="54"
+          textAnchor="middle"
+          fontSize="10"
+          fill="#94a3b8"
+          fontWeight="bold"
+        >
+          E
+        </text>
         {/* Arrow */}
         <g transform={`rotate(${direction}, 50, 50)`}>
           <polygon points="50,16 43,54 50,48 57,54" fill="#3b82f6" />
-          <polygon points="50,84 43,54 50,60 57,54" fill="#94a3b8" opacity="0.4" />
+          <polygon
+            points="50,84 43,54 50,60 57,54"
+            fill="#94a3b8"
+            opacity="0.4"
+          />
         </g>
       </svg>
     </Box>
-  )
-})
+  );
+});
 
 /** Format a display value (round numbers, pass strings through) */
 function formatValue(value: string | number): string | number {
-  return typeof value === 'number' ? Math.round(value) : value
+  return typeof value === 'number' ? Math.round(value) : value;
 }
 
 /** Animated data card */
@@ -83,11 +158,11 @@ const DataCard = memo(function DataCard({
   large,
   delay = 0,
 }: Readonly<{
-  label: string
-  value: string | number | undefined
-  unit?: string
-  large?: boolean
-  delay?: number
+  label: string;
+  value: string | number | undefined;
+  unit?: string;
+  large?: boolean;
+  delay?: number;
 }>) {
   return (
     <MotionBox
@@ -102,7 +177,13 @@ const DataCard = memo(function DataCard({
       flex="1"
       minW="0"
     >
-      <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider">
+      <Text
+        fontSize="xs"
+        fontWeight="600"
+        color="gray.400"
+        textTransform="uppercase"
+        letterSpacing="wider"
+      >
         {label}
       </Text>
       <HStack gap={1} alignItems="baseline" mt={1}>
@@ -115,17 +196,25 @@ const DataCard = memo(function DataCard({
           {value === undefined ? '—' : formatValue(value)}
         </Text>
         {unit && value !== undefined && (
-          <Text fontSize={large ? 'md' : 'sm'} fontWeight="500" color="gray.400">
+          <Text
+            fontSize={large ? 'md' : 'sm'}
+            fontWeight="500"
+            color="gray.400"
+          >
             {unit}
           </Text>
         )}
       </HStack>
     </MotionBox>
-  )
-})
+  );
+});
 
 /** Tide row */
-const TideRow = memo(function TideRow({ label, value, delay = 0 }: Readonly<{ label: string; value?: string; delay?: number }>) {
+const TideRow = memo(function TideRow({
+  label,
+  value,
+  delay = 0,
+}: Readonly<{ label: string; value?: string; delay?: number }>) {
   return (
     <MotionFlex
       initial={{ opacity: 0, x: -5 }}
@@ -137,66 +226,99 @@ const TideRow = memo(function TideRow({ label, value, delay = 0 }: Readonly<{ la
       borderBottom="1px solid"
       borderColor="gray.100"
     >
-      <Text fontSize="sm" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider">
+      <Text
+        fontSize="sm"
+        fontWeight="600"
+        color="gray.400"
+        textTransform="uppercase"
+        letterSpacing="wider"
+      >
         {label}
       </Text>
-      <Text fontSize="md" fontWeight="600" color="gray.700" textAlign="right" maxW="65%">
+      <Text
+        fontSize="md"
+        fontWeight="600"
+        color="gray.700"
+        textAlign="right"
+        maxW="65%"
+      >
         {value || '—'}
       </Text>
     </MotionFlex>
-  )
-})
+  );
+});
 
-const REFRESH_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
+const REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
 export default function Home() {
-  const [data, setData] = useState<Observations | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-  const [activeTab, setActiveTab] = useState<TabId>('conditions')
-  const [station, setStation] = useState('WPOW1')
-  const [tideStation, setTideStation] = useState('9447130')
+  const [data, setData] = useState<Observations | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [activeTab, setActiveTab] = useState<TabId>('conditions');
+  const [station, setStation] = useState('WPOW1');
+  const [tideStation, setTideStation] = useState('9447130');
 
   const fetchData = useCallback(async () => {
     try {
-      setError(null)
-      const params = new URLSearchParams({ station, tideStation })
-      const res = await fetch(`/api/nbdc?${params.toString()}`)
-      if (!res.ok) throw new Error(`Failed to fetch data (${res.status})`)
-      const json: Observations = await res.json()
-      setData(json)
-      setLastUpdated(new Date())
+      setError(null);
+      const params = new URLSearchParams({ station, tideStation });
+      const res = await fetch(`/api/nbdc?${params.toString()}`);
+      if (!res.ok) throw new Error(`Failed to fetch data (${res.status})`);
+      const json: Observations = await res.json();
+      setData(json);
+      setLastUpdated(new Date());
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [station, tideStation])
+  }, [station, tideStation]);
 
   useEffect(() => {
-    fetchData()
-    const interval = setInterval(fetchData, REFRESH_INTERVAL_MS)
-    return () => clearInterval(interval)
-  }, [fetchData])
+    fetchData();
+    const interval = setInterval(fetchData, REFRESH_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
   function handleApplyCustom(newStation: string, newTideStation: string) {
-    setStation(newStation)
-    setTideStation(newTideStation)
-    setData(null)
-    setLoading(true)
-    setActiveTab('conditions')
+    setStation(newStation);
+    setTideStation(newTideStation);
+    setData(null);
+    setLoading(true);
+    setActiveTab('conditions');
   }
 
   return (
     <>
       <Head>
         <title>West Point Wind</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta
+          name="description"
+          content="Real-time wind and tide conditions for West Point, Seattle. Live weather data for kayakers, sailors, and paddleboarders."
+        />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
         <meta name="theme-color" content="#f1f5f9" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
 
@@ -220,7 +342,7 @@ export default function Home() {
                   <HStack gap={3}>
                     <Box flexShrink={0}>
                       <Image
-                        src="/west-point-logo.png"
+                        src="/west-point-logo-48w.webp"
                         alt="west point wind"
                         width={48}
                         height={48}
@@ -229,17 +351,32 @@ export default function Home() {
                       />
                     </Box>
                     <Box>
-                      <Text fontSize="2xl" fontWeight="800" color="gray.800" lineHeight="1.1">
+                      <Text
+                        fontSize="2xl"
+                        fontWeight="800"
+                        color="gray.800"
+                        lineHeight="1.1"
+                      >
                         West Point Wind
                       </Text>
-                      <Text fontSize="xs" fontWeight="500" color="gray.400" mt={0.5}>
-                        {data?.stationId ? `Station ${data.stationId}` : 'Loading station…'}
+                      <Text
+                        fontSize="xs"
+                        fontWeight="500"
+                        color="gray.400"
+                        mt={0.5}
+                      >
+                        {data?.stationId
+                          ? `Station ${data.stationId}`
+                          : 'Loading station…'}
                       </Text>
                     </Box>
                   </HStack>
                   {lastUpdated && (
                     <Text fontSize="xs" color="gray.400">
-                      {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {lastUpdated.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
                     </Text>
                   )}
                 </Flex>
@@ -250,7 +387,9 @@ export default function Home() {
                 <Flex justify="center" align="center" minH="300px">
                   <VStack gap={3}>
                     <Spinner size="lg" color="blue.400" />
-                    <Text fontSize="sm" color="gray.400">Fetching conditions…</Text>
+                    <Text fontSize="sm" color="gray.400">
+                      Fetching conditions…
+                    </Text>
                   </VStack>
                 </Flex>
               )}
@@ -259,8 +398,12 @@ export default function Home() {
               {error && !data && (
                 <Flex justify="center" align="center" minH="300px">
                   <VStack gap={3}>
-                    <Text fontSize="lg" color="red.400" fontWeight="600">⚠</Text>
-                    <Text fontSize="sm" color="gray.500" textAlign="center">{error}</Text>
+                    <Text fontSize="lg" color="red.400" fontWeight="600">
+                      ⚠
+                    </Text>
+                    <Text fontSize="sm" color="gray.500" textAlign="center">
+                      {error}
+                    </Text>
                     <Text
                       as="button"
                       fontSize="sm"
@@ -289,19 +432,43 @@ export default function Home() {
                       px={6}
                       py={5}
                     >
-                      <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider">
+                      <Text
+                        fontSize="xs"
+                        fontWeight="600"
+                        color="gray.400"
+                        textTransform="uppercase"
+                        letterSpacing="wider"
+                      >
                         Wind Speed
                       </Text>
                       <Flex align="center" justify="space-between" mt={2}>
                         <HStack gap={2} alignItems="baseline">
-                          <Text fontSize="6xl" fontWeight="800" color="gray.800" lineHeight="1">
-                            {data.windSpeed === undefined ? '—' : Math.round(data.windSpeed)}
+                          <Text
+                            fontSize="6xl"
+                            fontWeight="800"
+                            color="gray.800"
+                            lineHeight="1"
+                          >
+                            {data.windSpeed === undefined
+                              ? '—'
+                              : Math.round(data.windSpeed)}
                           </Text>
                           <VStack gap={0} alignItems="flex-start">
-                            <Text fontSize="lg" fontWeight="500" color="gray.400">mph</Text>
+                            <Text
+                              fontSize="lg"
+                              fontWeight="500"
+                              color="gray.400"
+                            >
+                              mph
+                            </Text>
                             {data.windDirection !== undefined && (
-                              <Text fontSize="sm" fontWeight="600" color="blue.400">
-                                {degToCompass(data.windDirection)} {data.windDirection}°
+                              <Text
+                                fontSize="sm"
+                                fontWeight="600"
+                                color="blue.400"
+                              >
+                                {degToCompass(data.windDirection)}{' '}
+                                {data.windDirection}°
                               </Text>
                             )}
                           </VStack>
@@ -312,10 +479,19 @@ export default function Home() {
 
                     {/* Gust and Temperature row */}
                     <Flex gap={4}>
-                      <DataCard label="Gusts" value={data.windGust} unit="mph" delay={0.05} />
+                      <DataCard
+                        label="Gusts"
+                        value={data.windGust}
+                        unit="mph"
+                        delay={0.05}
+                      />
                       <DataCard
                         label="Air Temp"
-                        value={data.airTemp === undefined ? undefined : Math.round(data.airTemp)}
+                        value={
+                          data.airTemp === undefined
+                            ? undefined
+                            : Math.round(data.airTemp)
+                        }
                         unit="°F"
                         delay={0.1}
                       />
@@ -332,11 +508,30 @@ export default function Home() {
                       px={5}
                       py={4}
                     >
-                      <Text fontSize="xs" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={2}>
+                      <Text
+                        fontSize="xs"
+                        fontWeight="600"
+                        color="gray.400"
+                        textTransform="uppercase"
+                        letterSpacing="wider"
+                        mb={2}
+                      >
                         Tides
                       </Text>
-                      <TideRow label="Current" value={data.currentTide ? `${data.currentTide} ft` : undefined} delay={0.18} />
-                      <TideRow label="Next" value={data.nextTide} delay={0.21} />
+                      <TideRow
+                        label="Current"
+                        value={
+                          data.currentTide
+                            ? `${data.currentTide} ft`
+                            : undefined
+                        }
+                        delay={0.18}
+                      />
+                      <TideRow
+                        label="Next"
+                        value={data.nextTide}
+                        delay={0.21}
+                      />
                       <Box>
                         <MotionFlex
                           initial={{ opacity: 0, x: -5 }}
@@ -346,10 +541,22 @@ export default function Home() {
                           align="center"
                           py={3}
                         >
-                          <Text fontSize="sm" fontWeight="600" color="gray.400" textTransform="uppercase" letterSpacing="wider">
+                          <Text
+                            fontSize="sm"
+                            fontWeight="600"
+                            color="gray.400"
+                            textTransform="uppercase"
+                            letterSpacing="wider"
+                          >
                             After
                           </Text>
-                          <Text fontSize="md" fontWeight="600" color="gray.700" textAlign="right" maxW="65%">
+                          <Text
+                            fontSize="md"
+                            fontWeight="600"
+                            color="gray.700"
+                            textAlign="right"
+                            maxW="65%"
+                          >
                             {data.nextTideAfter || '—'}
                           </Text>
                         </MotionFlex>
@@ -385,9 +592,7 @@ export default function Home() {
 
           {activeTab === 'about' && <AboutTab />}
 
-          {activeTab === 'forecast' && (
-            <ForecastTab station={station} />
-          )}
+          {activeTab === 'forecast' && <ForecastTab station={station} />}
 
           {activeTab === 'custom' && (
             <CustomTab
@@ -401,5 +606,5 @@ export default function Home() {
 
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
     </>
-  )
+  );
 }
