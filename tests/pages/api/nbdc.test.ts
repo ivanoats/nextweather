@@ -263,9 +263,16 @@ describe('/api/csv', () => {
         expect(res.status).toBe(200);
         const body = await res.json();
         // Station IDs should be sanitized to remove special characters
-        // Invalid IDs should fall back to defaults
-        expect(body.stationId).toBe('etcpasswd'); // sanitized
-        // Verify axios was called with sanitized values (special chars removed)
+        expect(body.stationId).toBe('etcpasswd');
+
+        // Verify the ACTUAL URLs called don't contain malicious patterns
+        const allCalls = mockedAxios.get.mock.calls.map((call) => call[0]);
+
+        // Ensure no call contains path traversal patterns
+        expect(allCalls.every((url) => !url.includes('../'))).toBe(true);
+        expect(allCalls.every((url) => !url.includes('etc/passwd'))).toBe(true);
+
+        // Verify sanitized values were used instead
         expect(mockedAxios.get).toHaveBeenCalledWith(
           expect.stringContaining('etcpasswd.txt')
         );
@@ -302,9 +309,28 @@ describe('/api/csv', () => {
       test: async ({ fetch }) => {
         const res = await fetch({ method: 'GET' });
         expect(res.status).toBe(200);
-        // URL should be sanitized, removing special characters
         const body = await res.json();
+        // URL should be sanitized, removing special characters
         expect(body.stationId).toBe('httpevilco'); // truncated to max length
+
+        // Verify no actual calls to evil.com or containing URL patterns
+        const allCalls = mockedAxios.get.mock.calls.map((call) => call[0]);
+
+        // Ensure no call attempts to reach evil.com
+        expect(allCalls.every((url) => !url.includes('evil.com'))).toBe(true);
+        expect(allCalls.every((url) => !url.includes('http://evil'))).toBe(
+          true
+        );
+        expect(allCalls.every((url) => !url.includes('//evil'))).toBe(true);
+
+        // All calls should only be to legitimate NOAA domains
+        expect(
+          allCalls.every(
+            (url) =>
+              url.includes('ndbc.noaa.gov') ||
+              url.includes('tidesandcurrents.noaa.gov')
+          )
+        ).toBe(true);
       },
     });
   });
