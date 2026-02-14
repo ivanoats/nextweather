@@ -22,6 +22,7 @@ refreshes automatically every 5 minutes.
 - **Customizable stations** — query any NDBC or NWS station by ID
 - **Responsive UI** — Chakra UI v3 with animated transitions via Framer Motion
 - **Comprehensive TypeScript types** — Fully typed API responses with exported types for external consumers
+- **Server-side caching** — In-memory cache reduces latency and API load with intelligent TTL settings (see [Caching Documentation](docs/CACHING.md))
 
 ## Architecture
 
@@ -40,6 +41,7 @@ src/
 │   ├── CustomTab.tsx          # Custom station selector
 │   └── ForecastTab.tsx        # Hourly forecast display
 └── util/
+    ├── cache.ts               # Server-side caching with TTL
     ├── convert.ts             # Unit conversions (m/s → mph, °C → °F)
     ├── forecast-summary.ts    # Natural language forecast generation
     ├── leading-zero.ts        # Zero-padding for date formatting
@@ -61,11 +63,14 @@ graph LR
 
 ### API Endpoints
 
-| Endpoint                                      | Source          | Description                                                   |
-| --------------------------------------------- | --------------- | ------------------------------------------------------------- |
-| `/api/nbdc?station=WPOW1&tideStation=9447130` | NDBC + NOAA T&C | Wind speed/direction/gust, air temp, tide level & predictions |
-| `/api/forecast?station=KSEA`                  | NWS             | Hourly wind & weather forecast for a station                  |
-| `/api/observations?station=KSEA`              | NWS             | Latest weather observations for a station                     |
+All endpoints implement server-side caching with appropriate TTL settings. See
+[Caching Documentation](docs/CACHING.md) for details.
+
+| Endpoint                                      | Source          | Description                                                   | Cache TTL  |
+| --------------------------------------------- | --------------- | ------------------------------------------------------------- | ---------- |
+| `/api/nbdc?station=WPOW1&tideStation=9447130` | NDBC + NOAA T&C | Wind speed/direction/gust, air temp, tide level & predictions | 5 minutes  |
+| `/api/forecast?station=KSEA`                  | NWS             | Hourly wind & weather forecast for a station                  | 30 minutes |
+| `/api/observations?station=KSEA`              | NWS             | Latest weather observations for a station                     | 5 minutes  |
 
 #### API Implementation Details
 
