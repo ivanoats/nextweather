@@ -143,6 +143,42 @@ Cache performance can be monitored via the `X-Cache` response header:
 The cache only stores **successful responses** (status 200). Errors are not cached,
 ensuring that temporary API failures don't persist in the cache.
 
+## Input Validation & Security
+
+All API endpoints validate station ID inputs to prevent Server-Side Request Forgery
+(SSRF) attacks ([CWE-918](https://cwe.mitre.org/data/definitions/918.html)):
+
+### Validation Rules
+
+Station IDs must be:
+
+- **Alphanumeric only** (a-z, A-Z, 0-9)
+- **Maximum 10 characters** long
+- **Non-empty**
+
+This blocks:
+
+- Path traversal attempts (`../`, `../../etc/passwd`)
+- URL injection (`http://evil.com`, `//attacker.com`)
+- Query parameter injection (`?evil=1`, `&malicious=true`)
+- Special characters that could manipulate URLs
+
+### Example
+
+```typescript
+// User input: ../../../etc/passwd
+// Sanitized to: etcpasswd (special chars removed)
+
+// User input: http://evil.com
+// Sanitized to: httpevilco (special chars removed, truncated to 10 chars)
+
+// Invalid after sanitization → falls back to default
+// User input: !!!
+// Result: WPOW1 (default station)
+```
+
+See `src/util/validate-station-id.ts` for implementation details.
+
 ## Testing
 
 Comprehensive tests are included:

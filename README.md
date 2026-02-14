@@ -23,6 +23,7 @@ refreshes automatically every 5 minutes.
 - **Responsive UI** — Chakra UI v3 with animated transitions via Framer Motion
 - **Comprehensive TypeScript types** — Fully typed API responses with exported types for external consumers
 - **Server-side caching** — In-memory cache reduces latency and API load with intelligent TTL settings (see [Caching Documentation](docs/CACHING.md))
+- **Input validation** — Station IDs validated to prevent SSRF attacks (CWE-918)
 
 ## Architecture
 
