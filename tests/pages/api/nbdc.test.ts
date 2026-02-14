@@ -324,13 +324,16 @@ describe('/api/csv', () => {
         expect(allCalls.every((url) => !url.includes('//evil'))).toBe(true);
 
         // All calls should only be to legitimate NOAA domains
-        expect(
-          allCalls.every(
-            (url) =>
-              url.includes('ndbc.noaa.gov') ||
-              url.includes('tidesandcurrents.noaa.gov')
-          )
-        ).toBe(true);
+        const allowedHosts = ['www.ndbc.noaa.gov', 'tidesandcurrents.noaa.gov'];
+        const allOnNoaaDomains = allCalls.every((url) => {
+          try {
+            const parsed = new URL(url);
+            return allowedHosts.includes(parsed.hostname);
+          } catch {
+            return false;
+          }
+        });
+        expect(allOnNoaaDomains).toBe(true);
       },
     });
   });
