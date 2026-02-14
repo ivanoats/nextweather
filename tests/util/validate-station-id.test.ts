@@ -73,7 +73,7 @@ describe('isValidStationId', () => {
 
     it('should reject IDs with slashes', () => {
       expect(isValidStationId('WPOW1/test')).toBe(false);
-      expect(isValidStationId('test\\bad')).toBe(false);
+      expect(isValidStationId(String.raw`test\bad`)).toBe(false);
     });
 
     it('should reject IDs with spaces', () => {

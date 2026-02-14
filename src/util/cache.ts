@@ -9,7 +9,7 @@ interface CacheEntry<T> {
 }
 
 class InMemoryCache {
-  private cache: Map<string, CacheEntry<any>>;
+  private readonly cache: Map<string, CacheEntry<any>>;
   private cleanupInterval: NodeJS.Timeout | null;
 
   constructor() {
