@@ -65,7 +65,6 @@ describe('InMemoryCache', () => {
     });
 
     it('should not return expired entries even if not cleaned up', () => {
-      const now = Date.now();
       // Manually set an expired entry
       cache.set('expired-key', 'data', -10); // Already expired
 
