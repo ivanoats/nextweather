@@ -24,7 +24,7 @@ const WIND_THRESHOLD_EPIC = 20;
 // Wind analysis thresholds
 const MIN_CONSECUTIVE_PERIODS_SUSTAINED = 3;
 const GUST_RANGE_THRESHOLD = 5;
-const WIND_SPEED_VARIANCE_THRESHOLD = 10;
+const WIND_SPEED_VARIANCE_THRESHOLD = 5;
 
 // Temperature thresholds (Fahrenheit)
 const TEMP_WARM = 75;

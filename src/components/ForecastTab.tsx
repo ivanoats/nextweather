@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { Box, Flex, Text, VStack, HStack, Spinner } from '@chakra-ui/react';
+import { Box, Flex, Text, VStack, HStack, Spinner, Alert } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
   AreaChart,
@@ -51,6 +51,31 @@ function formatShortHour(iso: string): string {
 function parseWindSpeed(ws: string): number {
   const windSpeedMatch = /(\d+)/.exec(ws);
   return windSpeedMatch ? Number.parseInt(windSpeedMatch[1], 10) : 0;
+}
+
+/** Check if forecasted wind differs significantly from current conditions */
+function isWindDifferent(
+  forecastPeriod: ForecastPeriod | undefined,
+  currentConditions: CurrentConditions | undefined
+): { isDifferent: boolean; message: string } | null {
+  if (!forecastPeriod || !currentConditions?.windSpeed) {
+    return null;
+  }
+
+  const forecastSpeed = parseWindSpeed(forecastPeriod.windSpeed);
+  const currentSpeed = currentConditions.windSpeed;
+  const speedDiff = Math.abs(forecastSpeed - currentSpeed);
+  const SIGNIFICANT_DIFFERENCE = 5; // 5+ mph difference is significant
+
+  if (speedDiff >= SIGNIFICANT_DIFFERENCE) {
+    const direction = forecastSpeed > currentSpeed ? 'higher' : 'lower';
+    return {
+      isDifferent: true,
+      message: `Current wind is ${Math.round(currentSpeed)} mph, but forecast shows ${Math.round(forecastSpeed)} mph for this hour. Actual conditions are ${direction} than predicted.`,
+    };
+  }
+
+  return null;
 }
 
 /** Wind speed sparkline chart */
@@ -381,6 +406,25 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
                 periods={data.periods}
                 currentConditions={currentConditions ?? undefined}
               />
+              {(() => {
+                const windComparison = isWindDifferent(
+                  data.periods[0],
+                  currentConditions ?? undefined
+                );
+                return (
+                  windComparison?.isDifferent && (
+                    <Alert.Root status="warning" mb={4}>
+                      <Alert.Indicator>⚠️</Alert.Indicator>
+                      <Alert.Content>
+                        <Alert.Title>Wind Conditions Differ</Alert.Title>
+                        <Alert.Description fontSize="sm">
+                          {windComparison.message}
+                        </Alert.Description>
+                      </Alert.Content>
+                    </Alert.Root>
+                  )
+                );
+              })()}
               <WindSparkline periods={data.periods} />
               {/* Group by day */}
               {groupByDay(data.periods).map(([day, periods]) => (
