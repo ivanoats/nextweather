@@ -22,7 +22,8 @@ describe('/api/forecast', () => {
     // Mock NWS points lookup (returns forecast URL)
     const mockPointsResponse = {
       properties: {
-        forecastHourly: 'https://api.weather.gov/gridpoints/SEW/124,67/forecast/hourly',
+        forecastHourly:
+          'https://api.weather.gov/gridpoints/SEW/124,67/forecast/hourly',
         gridId: 'SEW',
         gridX: 124,
         gridY: 67,
@@ -76,7 +77,10 @@ describe('/api/forecast', () => {
         expect(body.periods).toHaveLength(2);
         expect(body.periods[0]).toHaveProperty('windSpeed', '10 mph');
         expect(body.periods[0]).toHaveProperty('windDirection', 'S');
-        expect(body.periods[0]).toHaveProperty('shortForecast', 'Partly Cloudy');
+        expect(body.periods[0]).toHaveProperty(
+          'shortForecast',
+          'Partly Cloudy'
+        );
         expect(body.periods[0]).toHaveProperty('temperature', 48);
       },
     });
@@ -108,7 +112,8 @@ describe('/api/forecast', () => {
 
     const mockPointsResponse = {
       properties: {
-        forecastHourly: 'https://api.weather.gov/gridpoints/SEW/120,80/forecast/hourly',
+        forecastHourly:
+          'https://api.weather.gov/gridpoints/SEW/120,80/forecast/hourly',
         gridId: 'SEW',
         gridX: 120,
         gridY: 80,
@@ -146,6 +151,23 @@ describe('/api/forecast', () => {
 
         expect(res.status).toBe(200);
         expect(body.stationId).toBe('SISW1');
+      },
+    });
+  });
+
+  it('handles error without message property', async () => {
+    // Mock an error that doesn't have a message property
+    mockedAxios.get.mockRejectedValueOnce({ code: 'ECONNREFUSED' });
+
+    await testApiHandler({
+      pagesHandler: endpoint,
+      test: async ({ fetch }) => {
+        const res = await fetch({ method: 'GET' });
+        const body = await res.json();
+
+        expect(res.status).toBe(500);
+        expect(body).toHaveProperty('errors');
+        expect(body.errors).toContain('Internal error');
       },
     });
   });

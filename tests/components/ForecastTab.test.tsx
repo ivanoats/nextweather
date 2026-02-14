@@ -136,4 +136,156 @@ describe('ForecastTab', () => {
       await screen.findByText(/24-hour hourly forecast from NWS/)
     ).toBeInTheDocument();
   });
+
+  it('handles network error with rejected promise', async () => {
+    globalThis.fetch = jest.fn((url) => {
+      if (url.includes('/api/forecast')) {
+        return Promise.reject(new Error('Network failure'));
+      }
+      if (url.includes('/api/nbdc')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockCurrentConditions),
+        });
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    }) as jest.Mock;
+
+    renderForecastTab();
+
+    expect(
+      await screen.findByText(/Failed to fetch forecast: Network failure/)
+    ).toBeInTheDocument();
+  });
+
+  it('handles non-Error rejection reason', async () => {
+    globalThis.fetch = jest.fn((url) => {
+      if (url.includes('/api/forecast')) {
+        return Promise.reject('String error message');
+      }
+      if (url.includes('/api/nbdc')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockCurrentConditions),
+        });
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    }) as jest.Mock;
+
+    renderForecastTab();
+
+    expect(
+      await screen.findByText(/Failed to fetch forecast: String error message/)
+    ).toBeInTheDocument();
+  });
+
+  it('displays various weather icons based on forecast', async () => {
+    const forecastWithRain = {
+      ...mockFetchResponse,
+      periods: [
+        {
+          ...mockFetchResponse.periods[0],
+          shortForecast: 'Light Rain',
+        },
+        {
+          ...mockFetchResponse.periods[0],
+          shortForecast: 'Thunderstorms',
+        },
+        {
+          ...mockFetchResponse.periods[0],
+          shortForecast: 'Snow Showers',
+        },
+        {
+          ...mockFetchResponse.periods[0],
+          shortForecast: 'Foggy',
+        },
+        {
+          ...mockFetchResponse.periods[0],
+          shortForecast: 'Cloudy',
+        },
+        {
+          ...mockFetchResponse.periods[0],
+          shortForecast: 'Partly Sunny',
+          isDaytime: true,
+        },
+        {
+          ...mockFetchResponse.periods[0],
+          shortForecast: 'Clear',
+          isDaytime: true,
+        },
+        {
+          ...mockFetchResponse.periods[0],
+          shortForecast: 'Clear',
+          isDaytime: false,
+        },
+      ],
+    };
+
+    globalThis.fetch = jest.fn((url) => {
+      if (url.includes('/api/forecast')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(forecastWithRain),
+        });
+      }
+      if (url.includes('/api/nbdc')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockCurrentConditions),
+        });
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    }) as jest.Mock;
+
+    renderForecastTab();
+
+    // Just verify the forecast loads - icons are rendered in the component
+    expect(await screen.findByText('Wind Forecast')).toBeInTheDocument();
+    expect(await screen.findByText('Light Rain')).toBeInTheDocument();
+  });
+
+  it('handles missing current conditions gracefully', async () => {
+    globalThis.fetch = jest.fn((url) => {
+      if (url.includes('/api/forecast')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockFetchResponse),
+        });
+      }
+      if (url.includes('/api/nbdc')) {
+        return Promise.resolve({
+          ok: false,
+          status: 500,
+        });
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    }) as jest.Mock;
+
+    renderForecastTab();
+
+    // Should still show forecast even if current conditions fail
+    expect(await screen.findByText('Wind Forecast')).toBeInTheDocument();
+    expect(await screen.findByText('10 mph')).toBeInTheDocument();
+  });
+
+  it('handles nbdc network error gracefully', async () => {
+    globalThis.fetch = jest.fn((url) => {
+      if (url.includes('/api/forecast')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockFetchResponse),
+        });
+      }
+      if (url.includes('/api/nbdc')) {
+        return Promise.reject(new Error('NBDC service down'));
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    }) as jest.Mock;
+
+    renderForecastTab();
+
+    // Should still show forecast even if nbdc completely fails
+    expect(await screen.findByText('Wind Forecast')).toBeInTheDocument();
+    expect(await screen.findByText('10 mph')).toBeInTheDocument();
+  });
 });

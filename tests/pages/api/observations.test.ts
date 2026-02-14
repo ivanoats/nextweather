@@ -23,7 +23,8 @@ describe('/api/observations', () => {
             coordinates: [-122.44, 47.66] as [number, number],
           },
           properties: {
-            '@id': 'https://api.weather.gov/stations/KSEA/observations/2026-02-12T15:00:00+00:00',
+            '@id':
+              'https://api.weather.gov/stations/KSEA/observations/2026-02-12T15:00:00+00:00',
             '@type': 'wx:ObservationStation',
             elevation: { unitCode: 'wmoUnit:m', value: 3, qualityControl: 'V' },
             station: 'https://api.weather.gov/stations/KSEA',
@@ -32,11 +33,31 @@ describe('/api/observations', () => {
             textDescription: '',
             icon: null,
             presentWeather: [],
-            temperature: { unitCode: 'wmoUnit:degC', value: 10, qualityControl: 'V' },
-            dewpoint: { unitCode: 'wmoUnit:degC', value: 5, qualityControl: 'V' },
-            windSpeed: { unitCode: 'wmoUnit:km_h-1', value: 5, qualityControl: 'V' },
-            windDirection: { unitCode: 'wmoUnit:degree_(angle)', value: 180, qualityControl: 'V' },
-            windGust: { unitCode: 'wmoUnit:km_h-1', value: null, qualityControl: 'Z' },
+            temperature: {
+              unitCode: 'wmoUnit:degC',
+              value: 10,
+              qualityControl: 'V',
+            },
+            dewpoint: {
+              unitCode: 'wmoUnit:degC',
+              value: 5,
+              qualityControl: 'V',
+            },
+            windSpeed: {
+              unitCode: 'wmoUnit:km_h-1',
+              value: 5,
+              qualityControl: 'V',
+            },
+            windDirection: {
+              unitCode: 'wmoUnit:degree_(angle)',
+              value: 180,
+              qualityControl: 'V',
+            },
+            windGust: {
+              unitCode: 'wmoUnit:km_h-1',
+              value: null,
+              qualityControl: 'Z',
+            },
           },
         },
       ],
@@ -120,7 +141,8 @@ describe('/api/observations', () => {
             coordinates: [-122.44, 47.66] as [number, number],
           },
           properties: {
-            '@id': 'https://api.weather.gov/stations/WPOW1/observations/2026-02-10T15:00:00+00:00',
+            '@id':
+              'https://api.weather.gov/stations/WPOW1/observations/2026-02-10T15:00:00+00:00',
             '@type': 'wx:ObservationStation',
             elevation: { unitCode: 'wmoUnit:m', value: 3, qualityControl: 'V' },
             station: 'https://api.weather.gov/stations/WPOW1',
@@ -129,11 +151,31 @@ describe('/api/observations', () => {
             textDescription: '',
             icon: null,
             presentWeather: [],
-            temperature: { unitCode: 'wmoUnit:degC', value: 12.5, qualityControl: 'V' },
-            dewpoint: { unitCode: 'wmoUnit:degC', value: null, qualityControl: 'Z' },
-            windSpeed: { unitCode: 'wmoUnit:km_h-1', value: 10, qualityControl: 'V' },
-            windDirection: { unitCode: 'wmoUnit:degree_(angle)', value: 180, qualityControl: 'V' },
-            windGust: { unitCode: 'wmoUnit:km_h-1', value: null, qualityControl: 'Z' },
+            temperature: {
+              unitCode: 'wmoUnit:degC',
+              value: 12.5,
+              qualityControl: 'V',
+            },
+            dewpoint: {
+              unitCode: 'wmoUnit:degC',
+              value: null,
+              qualityControl: 'Z',
+            },
+            windSpeed: {
+              unitCode: 'wmoUnit:km_h-1',
+              value: 10,
+              qualityControl: 'V',
+            },
+            windDirection: {
+              unitCode: 'wmoUnit:degree_(angle)',
+              value: 180,
+              qualityControl: 'V',
+            },
+            windGust: {
+              unitCode: 'wmoUnit:km_h-1',
+              value: null,
+              qualityControl: 'Z',
+            },
           },
         },
       ],
@@ -152,6 +194,23 @@ describe('/api/observations', () => {
         expect(body.statusCode).toBe(200);
         expect(body.body).toBeDefined();
         expect(typeof body.body).toBe('object');
+      },
+    });
+  });
+
+  it('handles non-Error exceptions', async () => {
+    // Mock a rejection that is not an Error instance
+    mockedAxios.get.mockRejectedValueOnce('String error');
+
+    await testApiHandler({
+      pagesHandler: endpoint,
+      test: async ({ fetch }) => {
+        const res = await fetch({ method: 'GET' });
+        const body = await res.json();
+
+        expect(body).toHaveProperty('statusCode', 500);
+        expect(body.body).toHaveProperty('message', 'An error occurred');
+        expect(body.body.error).toHaveProperty('name', 'UnknownError');
       },
     });
   });
