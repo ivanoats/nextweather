@@ -21,12 +21,6 @@ export default function Document() {
         <link rel="dns-prefetch" href="https://www.ndbc.noaa.gov" />
         <link rel="dns-prefetch" href="https://tidesandcurrents.noaa.gov" />
         <link rel="dns-prefetch" href="https://api.weather.gov" />
-
-        {/* Meta tags */}
-        <meta
-          name="description"
-          content="Real-time wind and tide conditions for West Point, Seattle. Live weather data for kayakers, sailors, and paddleboarders."
-        />
       </Head>
       <body>
         <Main />
