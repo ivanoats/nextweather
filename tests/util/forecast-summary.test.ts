@@ -52,7 +52,7 @@ describe('generateForecastSummary', () => {
     expect(summary.toLowerCase()).toContain('wind');
 
     // Should be enthusiastic (contains emoji or exclamation)
-    expect(/🎉|🚀|⛵|🏄|🌊|!/u.test(summary)).toBe(true);
+    expect(/[🎉🚀⛵🏄🌊!]/u.test(summary)).toBe(true);
   });
 
   it('should generate epic message for very high sustained wind', () => {
@@ -73,7 +73,7 @@ describe('generateForecastSummary', () => {
         summary.includes('WILD') ||
         summary.includes('WHOA') ||
         summary.includes('PUMPED') ||
-        /🔥|⚡|💨/u.test(summary)
+        /[🔥⚡💨]/u.test(summary)
     ).toBe(true);
   });
 
@@ -358,7 +358,7 @@ describe('generateForecastSummary', () => {
           summary.includes('MAJOR') ||
           summary.includes('MASSIVE') ||
           summary.includes('WILD') ||
-          /🎉|🚀|⛵|🏄|🔥|⚡|💨/u.test(summary)
+          /[🎉🚀⛵🏄🔥⚡💨]/u.test(summary)
       ).toBe(true);
     });
 
@@ -446,7 +446,7 @@ describe('generateForecastSummary', () => {
           summary.includes('MAJOR') ||
           summary.includes('MASSIVE') ||
           summary.includes('WILD') ||
-          /🔥|⚡|💨/u.test(summary)
+          /[🔥⚡💨]/u.test(summary)
       ).toBe(true);
     });
 
@@ -512,7 +512,7 @@ describe('generateForecastSummary', () => {
           summary.includes('sick waves') ||
           summary.includes('EPIC') ||
           summary.includes('MAJOR') ||
-          /🎉|🚀|⛵|🏄|🔥|⚡/u.test(summary)
+          /[🎉🚀⛵🏄🔥⚡]/u.test(summary)
       ).toBe(true);
     });
   });
