@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import cache, { CACHE_TTL, generateCacheKey } from '../../util/cache';
 
 export interface WeatherValue {
   unitCode: string;
@@ -80,15 +81,40 @@ const observations = async (
   req: NextApiRequest,
   res: NextApiResponse<ObservationResponse>
 ) => {
-  const station = req.query.station || 'KSEA';
+  const station = String(req.query.station || 'KSEA');
+
+  // Generate cache key based on station parameter
+  const cacheKey = generateCacheKey('observations', { station });
+
+  // Check cache first
+  const cachedData = cache.get<SuccessResponse>(cacheKey);
+  if (cachedData) {
+    // Add cache hit header for debugging
+    res.setHeader('X-Cache', 'HIT');
+    res.json(cachedData);
+    return;
+  }
+
   try {
     const obs = await axios.get(
       `https://api.weather.gov/stations/${station}/observations`
     );
-    res.json({
+
+    const response: SuccessResponse = {
       statusCode: 200,
       body: obs.data,
-    });
+    };
+
+    // Cache successful response
+    cache.set(cacheKey, response, CACHE_TTL.OBSERVATIONS);
+    // Add cache miss header for debugging
+    res.setHeader('X-Cache', 'MISS');
+    // Add Cache-Control header for HTTP caching
+    res.setHeader(
+      'Cache-Control',
+      `public, max-age=${CACHE_TTL.OBSERVATIONS}, s-maxage=${CACHE_TTL.OBSERVATIONS}`
+    );
+    res.json(response);
   } catch (error) {
     const errorDetails =
       error instanceof Error

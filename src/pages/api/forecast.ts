@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import cache, { CACHE_TTL, generateCacheKey } from '../../util/cache';
 
 export type ForecastPeriod = {
   startTime: string;
@@ -108,6 +109,19 @@ export default async function handler(
   const stationId = String(req.query.station || 'WPOW1');
   const errors: unknown[] = [];
 
+  // Generate cache key based on station parameter
+  const cacheKey = generateCacheKey('forecast', { station: stationId });
+
+  // Check cache first
+  const cachedData = cache.get<ForecastResponse>(cacheKey);
+  if (cachedData) {
+    setCorsHeaders(res);
+    // Add cache hit header for debugging
+    res.setHeader('X-Cache', 'HIT');
+    res.status(200).json(cachedData);
+    return;
+  }
+
   setCorsHeaders(res);
 
   try {
@@ -115,12 +129,23 @@ export default async function handler(
     const forecastUrl = await getForecastUrl(lat, lon);
     const periods = await getHourlyForecast(forecastUrl);
 
-    res.status(200).json({
+    const response: ForecastResponse = {
       stationId,
       latitude: lat,
       longitude: lon,
       periods,
-    });
+    };
+
+    // Cache successful response
+    cache.set(cacheKey, response, CACHE_TTL.FORECAST);
+    // Add cache miss header for debugging
+    res.setHeader('X-Cache', 'MISS');
+    // Add Cache-Control header for HTTP caching
+    res.setHeader(
+      'Cache-Control',
+      `public, max-age=${CACHE_TTL.FORECAST}, s-maxage=${CACHE_TTL.FORECAST}`
+    );
+    res.status(200).json(response);
   } catch (err: any) {
     const errorMessage = err?.message || 'Internal error';
     errors.push(errorMessage);

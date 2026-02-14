@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import metersPerSecondToMph, { celsiusToFahrenheit } from '../../util/convert';
 import leadingZero from '../../util/leading-zero';
 import NWSDateToJSDate from '../../util/nws-date-to-js-date';
+import cache, { CACHE_TTL, generateCacheKey } from '../../util/cache';
 
 // NDBC Realtime2 data format column indices
 // #YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP VIS PTDY  TIDE
@@ -176,6 +177,22 @@ export default async function handler(
   const weatherStation = String(req.query.station || 'WPOW1');
   const tideStationId = String(req.query.tideStation || '9447130');
 
+  // Generate cache key based on station parameters
+  const cacheKey = generateCacheKey('nbdc', {
+    station: weatherStation,
+    tideStation: tideStationId,
+  });
+
+  // Check cache first
+  const cachedData = cache.get<Observations>(cacheKey);
+  if (cachedData) {
+    setCorsHeaders(res);
+    // Add cache hit header for debugging
+    res.setHeader('X-Cache', 'HIT');
+    res.status(200).json(cachedData);
+    return;
+  }
+
   // NDBC switched from SOS protocol to direct text files
   // See: https://www.ndbc.noaa.gov/data/realtime2/
   const ndbcUri = `https://www.ndbc.noaa.gov/data/realtime2/${weatherStation}.txt`;
@@ -214,6 +231,15 @@ export default async function handler(
   setCorsHeaders(res);
 
   if (errors.length === 0) {
+    // Cache successful response
+    cache.set(cacheKey, observations, CACHE_TTL.NBDC);
+    // Add cache miss header for debugging
+    res.setHeader('X-Cache', 'MISS');
+    // Add Cache-Control header for HTTP caching
+    res.setHeader(
+      'Cache-Control',
+      `public, max-age=${CACHE_TTL.NBDC}, s-maxage=${CACHE_TTL.NBDC}`
+    );
     res.status(200).json(observations);
   } else {
     console.log(errors);
