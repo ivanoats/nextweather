@@ -1,6 +1,7 @@
 import endpoint from 'src/pages/api/forecast';
 import { testApiHandler } from 'next-test-api-route-handler';
 import axios from 'axios';
+import cache from '../../../src/util/cache';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -8,6 +9,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('/api/forecast', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    cache.clear();
   });
 
   it('returns hourly forecast periods', async () => {
