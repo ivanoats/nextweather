@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import cache, { CACHE_TTL, generateCacheKey } from '../../util/cache';
+import { sanitizeStationId } from '../../util/validate-station-id';
 
 export type ForecastPeriod = {
   startTime: string;
@@ -106,7 +107,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ForecastResponse | ForecastAPIError>
 ) {
-  const stationId = String(req.query.station || 'WPOW1');
+  // Sanitize user input to prevent SSRF attacks (CWE-918)
+  // Only allow alphanumeric station IDs to prevent path traversal and URL injection
+  const stationId = sanitizeStationId(
+    req.query.station as string | undefined,
+    'WPOW1'
+  );
   const errors: unknown[] = [];
 
   // Generate cache key based on station parameter

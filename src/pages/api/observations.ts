@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import cache, { CACHE_TTL, generateCacheKey } from '../../util/cache';
+import { sanitizeStationId } from '../../util/validate-station-id';
 
 export interface WeatherValue {
   unitCode: string;
@@ -81,7 +82,12 @@ const observations = async (
   req: NextApiRequest,
   res: NextApiResponse<ObservationResponse>
 ) => {
-  const station = String(req.query.station || 'KSEA');
+  // Sanitize user input to prevent SSRF attacks (CWE-918)
+  // Only allow alphanumeric station IDs to prevent path traversal and URL injection
+  const station = sanitizeStationId(
+    req.query.station as string | undefined,
+    'KSEA'
+  );
 
   // Generate cache key based on station parameter
   const cacheKey = generateCacheKey('observations', { station });

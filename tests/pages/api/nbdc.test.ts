@@ -232,6 +232,83 @@ describe('/api/csv', () => {
     });
   });
 
+  it('sanitizes station IDs to prevent SSRF attacks', async () => {
+    const mockNdbcData = `#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP VIS PTDY  TIDE
+#yr  mo dy hr mn degT m/s  m/s  m      sec   sec degT  hPa   degC  degC  degC  nmi  hPa   ft
+2026 02 11 19 00  180  5.0  7.0  MM     MM    MM  MM   1013.5 10.5  MM    MM   MM   MM    MM`;
+
+    mockedAxios.get
+      .mockResolvedValueOnce({ data: mockNdbcData })
+      .mockResolvedValueOnce({
+        data: {
+          metadata: { id: '9447130' },
+          data: [{ t: '2026-02-11 18:54', v: '8.5' }],
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          predictions: [
+            { t: '2026-02-11 22:30', v: '10.2', type: 'H' },
+            { t: '2026-02-12 04:15', v: '2.5', type: 'L' },
+          ],
+        },
+      });
+
+    // Test with malicious input - path traversal attempt
+    await testApiHandler({
+      pagesHandler: endpoint,
+      params: { station: '../../../etc/passwd', tideStation: '../../secret' },
+      test: async ({ fetch }) => {
+        const res = await fetch({ method: 'GET' });
+        expect(res.status).toBe(200);
+        const body = await res.json();
+        // Station IDs should be sanitized to remove special characters
+        // Invalid IDs should fall back to defaults
+        expect(body.stationId).toBe('etcpasswd'); // sanitized
+        // Verify axios was called with sanitized values (special chars removed)
+        expect(mockedAxios.get).toHaveBeenCalledWith(
+          expect.stringContaining('etcpasswd.txt')
+        );
+        expect(mockedAxios.get).toHaveBeenCalledWith(
+          expect.stringContaining('station=secret')
+        );
+      },
+    });
+  });
+
+  it('blocks URL injection attempts in station parameters', async () => {
+    const mockNdbcData = `#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP VIS PTDY  TIDE
+#yr  mo dy hr mn degT m/s  m/s  m      sec   sec degT  hPa   degC  degC  degC  nmi  hPa   ft
+2026 02 11 19 00  180  5.0  7.0  MM     MM    MM  MM   1013.5 10.5  MM    MM   MM   MM    MM`;
+
+    mockedAxios.get
+      .mockResolvedValueOnce({ data: mockNdbcData })
+      .mockResolvedValueOnce({
+        data: {
+          metadata: { id: '9447130' },
+          data: [{ t: '2026-02-11 18:54', v: '8.5' }],
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          predictions: [{ t: '2026-02-11 22:30', v: '10.2', type: 'H' }],
+        },
+      });
+
+    // Test with URL injection attempt
+    await testApiHandler({
+      pagesHandler: endpoint,
+      params: { station: 'http://evil.com/attack' },
+      test: async ({ fetch }) => {
+        const res = await fetch({ method: 'GET' });
+        expect(res.status).toBe(200);
+        // URL should be sanitized, removing special characters
+        const body = await res.json();
+        expect(body.stationId).toBe('httpevilco'); // truncated to max length
+      },
+    });
+  });
+
   it('returns cached data on subsequent requests', async () => {
     const mockNdbcData = `#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP VIS PTDY  TIDE
 #yr  mo dy hr mn degT m/s  m/s  m      sec   sec degT  hPa   degC  degC  degC  nmi  hPa   ft

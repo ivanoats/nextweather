@@ -5,6 +5,7 @@ import metersPerSecondToMph, { celsiusToFahrenheit } from '../../util/convert';
 import leadingZero from '../../util/leading-zero';
 import NWSDateToJSDate from '../../util/nws-date-to-js-date';
 import cache, { CACHE_TTL, generateCacheKey } from '../../util/cache';
+import { sanitizeStationId } from '../../util/validate-station-id';
 
 // NDBC Realtime2 data format column indices
 // #YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP VIS PTDY  TIDE
@@ -174,8 +175,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Observations | WeatherAPIerror>
 ) {
-  const weatherStation = String(req.query.station || 'WPOW1');
-  const tideStationId = String(req.query.tideStation || '9447130');
+  // Sanitize user input to prevent SSRF attacks (CWE-918)
+  // Only allow alphanumeric station IDs to prevent path traversal and URL injection
+  const weatherStation = sanitizeStationId(
+    req.query.station as string | undefined,
+    'WPOW1'
+  );
+  const tideStationId = sanitizeStationId(
+    req.query.tideStation as string | undefined,
+    '9447130'
+  );
 
   // Generate cache key based on station parameters
   const cacheKey = generateCacheKey('nbdc', {
