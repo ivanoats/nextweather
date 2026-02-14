@@ -14,6 +14,11 @@ refreshes automatically every 5 minutes.
 - **Live wind observations** — speed, gust, and direction from NDBC buoy stations
 - **Tide levels & predictions** — current water level plus upcoming high/low tides from NOAA Tides & Currents
 - **Hourly forecast** — wind and weather forecast from the National Weather Service
+- **Intelligent forecast summaries** — natural language weather descriptions with
+  emoji-enhanced messages tailored for water sports enthusiasts
+- **Wind speed visualization** — sparkline charts showing wind trends over the next 24 hours
+- **Wind condition alerts** — automatic comparison of current vs. forecasted
+  conditions with actionable recommendations
 - **Customizable stations** — query any NDBC or NWS station by ID
 - **Responsive UI** — Chakra UI v3 with animated transitions via Framer Motion
 - **Comprehensive TypeScript types** — Fully typed API responses with exported types for external consumers
@@ -36,6 +41,7 @@ src/
 │   └── ForecastTab.tsx        # Hourly forecast display
 └── util/
     ├── convert.ts             # Unit conversions (m/s → mph, °C → °F)
+    ├── forecast-summary.ts    # Natural language forecast generation
     ├── leading-zero.ts        # Zero-padding for date formatting
     └── nws-date-to-js-date.ts # NOAA date string → JS Date
 ```
@@ -85,6 +91,48 @@ NWS API requests include a required User-Agent header:
 ```typescript
 const NWS_USER_AGENT = 'NextWeather/1.0 (westpointwind.com)';
 ```
+
+### Forecast Summary System
+
+NextWeather includes an intelligent forecast summarization system that generates
+natural language descriptions of wind conditions using a template-based approach
+(no LLM required). This provides:
+
+- **Zero-cost operation** — Template-based generation with no API costs
+- **Instant response** — No network latency or rate limits
+- **Predictable output** — Consistent, reliable messaging
+- **Water sports focus** — Language and recommendations tailored for kayakers, sailors, and paddleboarders
+
+#### Key Capabilities
+
+**Wind Analysis:**
+
+- Parses forecast periods to calculate average, min, and max wind speeds
+- Detects sustained high wind conditions (3+ consecutive periods)
+- Identifies gusty conditions when wind ranges exceed thresholds
+- Provides emoji-enhanced descriptions matching enthusiasm to conditions
+
+**Current vs. Forecast Comparison:**
+
+- Compares forecasted conditions with real-time observations
+- Generates contextual alerts when differences exceed 5 mph
+- Warns about strong gusts (10+ mph higher than sustained wind)
+- Adjusts messaging when current conditions are better/worse than forecast
+
+**Weather Context:**
+
+- Analyzes temperature trends and provides comfort descriptions
+- Identifies dominant weather patterns (sunny, cloudy, rainy, stormy)
+- Generates actionable recommendations based on conditions
+- Includes safety warnings for severe weather
+
+**Wind Speed Visualization:**
+
+- Sparkline charts show 24-hour wind speed trends
+- Visual display of wind variation throughout the day
+- Helps identify optimal timing for water activities
+
+Implementation: `src/util/forecast-summary.ts` with integration in `ForecastTab.tsx`
 
 ### Tech Stack
 
