@@ -35,7 +35,7 @@
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.0",
     "@babel/preset-typescript": "^7.28.5",
-    "@commitlint/cli": "^19.6.2",
+    "@commitlint/cli": "^20.4.1",
     "@commitlint/config-conventional": "^19.6.2",
     "@storybook/addon-docs": "^10.2.8",
     "@storybook/addon-links": "^10.2.8",
