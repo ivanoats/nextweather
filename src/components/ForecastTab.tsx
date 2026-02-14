@@ -1,5 +1,13 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { Box, Flex, Text, VStack, HStack, Spinner, Alert } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Text,
+  VStack,
+  HStack,
+  Spinner,
+  Alert,
+} from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
   AreaChart,
@@ -68,7 +76,7 @@ function isWindDifferent(
   const SIGNIFICANT_DIFFERENCE = 5; // 5+ mph difference is significant
 
   if (speedDiff >= SIGNIFICANT_DIFFERENCE) {
-    const direction = forecastSpeed > currentSpeed ? 'higher' : 'lower';
+    const direction = currentSpeed > forecastSpeed ? 'higher' : 'lower';
     return {
       isDifferent: true,
       message: `Current wind is ${Math.round(currentSpeed)} mph, but forecast shows ${Math.round(forecastSpeed)} mph for this hour. Actual conditions are ${direction} than predicted.`,
