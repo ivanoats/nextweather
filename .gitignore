@@ -47,6 +47,9 @@ buildlog.txt
 # Storybook static build output
 /storybook-static
 
+# GitHub Skills auto-generated directory
+.github/skills
+
 # TypeScript build info
 tsconfig.tsbuildinfo
 
