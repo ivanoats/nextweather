@@ -312,6 +312,7 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
   }, [station]);
 
   useEffect(() => {
+    // IIFE avoids triggering react-hooks/set-state-in-effect for the async fetch
     void (async () => {
       await fetchForecast();
     })();
