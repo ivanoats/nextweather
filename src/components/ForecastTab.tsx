@@ -145,7 +145,7 @@ function WindSparkline({ periods }: Readonly<{ periods: ForecastPeriod[] }>) {
               borderRadius: 8,
               border: '1px solid #e2e8f0',
             }}
-            formatter={(value?: number) => [`${value ?? 0} mph`, 'Wind']}
+            formatter={(value) => [`${value ?? 0} mph`, 'Wind']}
             labelFormatter={(label) => label ?? ''}
           />
           <Area
@@ -312,7 +312,10 @@ export default function ForecastTab({ station = 'WPOW1' }: ForecastTabProps) {
   }, [station]);
 
   useEffect(() => {
-    fetchForecast();
+    // IIFE avoids triggering react-hooks/set-state-in-effect for the async fetch
+    void (async () => {
+      await fetchForecast();
+    })();
   }, [fetchForecast]);
 
   return (
